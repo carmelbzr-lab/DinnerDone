@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DinnerDone - Your Kitchen Companion</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --primary: #0d9488;
+  --primary-light: #14b8a6;
+  --primary-dark: #0f766e;
+  --primary-bg: #f0fdfa;
+  --accent: #f59e0b;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--gray-100);
+  color: var(--gray-800);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+#root {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: white;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0,0,0,0.1);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 0; }
+
+/* Animations */
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideIn { from { transform:translateX(100%); } to { transform:translateX(0); } }
+@keyframes slideOut { from { transform:translateX(0); } to { transform:translateX(-100%); } }
+@keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
+@keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+@keyframes heartBeat { 0% { transform:scale(1); } 15% { transform:scale(1.3); } 30% { transform:scale(1); } 45% { transform:scale(1.15); } 60% { transform:scale(1); } }
+@keyframes shimmer { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
+
+.fade-in { animation: fadeIn 0.3s ease-out; }
+.slide-up { animation: slideUp 0.4s ease-out; }
+
+/* Page transitions */
+.page-container {
+  padding-bottom: 80px;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--gray-100);
+}
+.header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+.header-icon {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius);
+  background: var(--gray-50);
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-size: 18px;
+}
+.header-icon:hover { background: var(--gray-200); }
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  background: white;
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  z-index: 200;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: none;
+  color: var(--gray-400);
+  font-size: 10px;
+  font-weight: 500;
+  gap: 4px;
+}
+.nav-item i { font-size: 20px; transition: all 0.2s; }
+.nav-item.active { color: var(--primary); }
+.nav-item.active i { transform: scale(1.1); }
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: all 0.2s;
+  border: 1px solid var(--gray-100);
+}
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card:active { transform: scale(0.98); }
+
+/* Recipe Card */
+.recipe-card { cursor: pointer; }
+.recipe-card img {
+  width: 100%; height: 180px; object-fit: cover;
+}
+.recipe-card-body { padding: 14px; }
+.recipe-card-title {
+  font-size: 16px; font-weight: 600; color: var(--gray-900);
+  margin-bottom: 6px;
+}
+.recipe-card-desc {
+  font-size: 13px; color: var(--gray-500);
+  line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.recipe-card-meta {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 10px; font-size: 12px; color: var(--gray-400);
+}
+.recipe-card-meta span { display: flex; align-items: center; gap: 4px; }
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--gray-50);
+  border-radius: var(--radius-full);
+  padding: 10px 16px;
+  margin: 0 20px 16px;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+.search-bar:focus-within { border-color: var(--primary); background: white; }
+.search-bar input {
+  flex: 1; border: none; outline: none; background: none;
+  font-size: 15px; color: var(--gray-800);
+  font-family: inherit;
+}
+.search-bar input::placeholder { color: var(--gray-400); }
+.search-bar i { color: var(--gray-400); margin-right: 10px; }
+
+/* Category Tags */
+.tags-container {
+  display: flex; gap: 8px; padding: 0 20px 16px;
+  overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none;
+}
+.tags-container::-webkit-scrollbar { display: none; }
+.tag {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 13px; font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1.5px solid var(--gray-200);
+  background: white;
+  color: var(--gray-600);
+}
+.tag.active { background: var(--primary); color: white; border-color: var(--primary); }
+.tag:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+/* Action Row */
+.action-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 1px solid var(--gray-100);
+}
+.action-row:hover { background: var(--gray-50); }
+.action-row:active { background: var(--gray-100); }
+.action-row-icon {
+  width: 44px; height: 44px;
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+.action-row-content { flex: 1; }
+.action-row-title { font-size: 16px; font-weight: 500; color: var(--gray-800); }
+.action-row-subtitle { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+.action-row-chevron { color: var(--gray-300); font-size: 14px; }
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-size: 15px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: inherit;
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+.btn-secondary:hover { background: var(--gray-200); }
+.btn-accent { background: var(--accent); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-full { width: 100%; }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.btn-lg { padding: 16px 32px; font-size: 17px; }
+
+/* Input */
+.input-group { margin-bottom: 16px; }
+.input-group label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: var(--gray-700); margin-bottom: 6px;
+}
+.input {
+  width: 100%; padding: 12px 16px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 15px; font-family: inherit;
+  transition: all 0.2s;
+  background: white;
+  color: var(--gray-800);
+}
+.input:focus { outline: none; border-color: var(--primary); }
+.input::placeholder { color: var(--gray-400); }
+
+/* Select */
+.select {
+  width: 100%; padding: 12px 16px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 15px; font-family: inherit;
+  background: white;
+  color: var(--gray-800);
+  appearance: none;
+  cursor: pointer;
+}
+.select:focus { outline: none; border-color: var(--primary); }
+
+/* Badge */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 600;
+}
+.badge-primary { background: var(--primary-bg); color: var(--primary); }
+.badge-accent { background: #fffbeb; color: var(--accent); }
+.badge-success { background: #f0fdf4; color: var(--success); }
+.badge-danger { background: #fef2f2; color: var(--danger); }
+
+/* Favorite Heart */
+.heart-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 22px; color: var(--gray-300);
+  transition: all 0.2s; padding: 4px;
+}
+.heart-btn.active { color: var(--danger); animation: heartBeat 0.6s; }
+
+/* Timer Display */
+.timer-display {
+  font-size: 64px; font-weight: 700; font-variant-numeric: tabular-nums;
+  color: var(--gray-900); text-align: center; letter-spacing: 2px;
+}
+.timer-circle {
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  border: 6px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto;
+  position: relative;
+}
+.timer-circle.running { border-color: var(--primary); }
+.timer-circle.running::after {
+  content: '';
+  position: absolute; inset: -6px;
+  border-radius: 50%;
+  border: 6px solid transparent;
+  border-top-color: var(--accent);
+  animation: spin 2s linear infinite;
+}
+
+/* Meal Planner */
+.day-card {
+  background: var(--gray-50);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--gray-200);
+  transition: all 0.2s;
+}
+.day-card.has-meal { border-color: var(--primary); background: var(--primary-bg); }
+.day-name {
+  font-size: 14px; font-weight: 700;
+  color: var(--gray-800); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* AI Badge */
+.ai-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  color: white; padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 600;
+}
+
+/* Ingredient chips */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: var(--gray-100);
+  border-radius: var(--radius-full);
+  font-size: 13px; color: var(--gray-700);
+  margin: 3px;
+}
+.chip-remove {
+  background: none; border: none;
+  color: var(--gray-400); cursor: pointer;
+  font-size: 14px; padding: 0;
+  display: flex; align-items: center;
+}
+.chip-remove:hover { color: var(--danger); }
+
+/* Progress bar */
+.progress-bar {
+  height: 8px; background: var(--gray-200);
+  border-radius: var(--radius-full); overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+}
+
+/* Modal/Overlay */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 300;
+  display: flex; align-items: flex-end; justify-content: center;
+  animation: fadeIn 0.2s;
+}
+.modal {
+  background: white;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  width: 100%; max-width: 430px;
+  max-height: 80vh; overflow-y: auto;
+  padding: 24px 20px;
+  animation: slideUp 0.3s ease-out;
+}
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--gray-300);
+  border-radius: var(--radius-full);
+  margin: 0 auto 20px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%; transform: translateX(-50%);
+  background: var(--gray-800);
+  color: white;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  font-size: 14px; font-weight: 500;
+  z-index: 400;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: var(--shadow-lg);
+  max-width: 380px;
+  text-align: center;
+}
+
+/* Recipe Detail */
+.recipe-hero { position: relative; }
+.recipe-hero img { width: 100%; height: 280px; object-fit: cover; }
+.recipe-hero-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  padding: 40px 20px 20px;
+  color: white;
+}
+.recipe-hero-title { font-size: 24px; font-weight: 700; }
+.recipe-hero-meta { display: flex; gap: 16px; margin-top: 8px; font-size: 13px; opacity: 0.9; }
+.recipe-hero-meta span { display: flex; align-items: center; gap: 4px; }
+.back-btn {
+  position: absolute; top: 16px; left: 16px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--gray-700);
+  box-shadow: var(--shadow);
+  z-index: 10;
+}
+.fav-btn-hero {
+  position: absolute; top: 16px; right: 16px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--gray-300);
+  box-shadow: var(--shadow);
+  z-index: 10;
+}
+.fav-btn-hero.active { color: var(--danger); }
+
+/* Section */
+.section { padding: 20px; }
+.section-title {
+  font-size: 18px; font-weight: 700;
+  color: var(--gray-900); margin-bottom: 14px;
+}
+.section-subtitle {
+  font-size: 14px; color: var(--gray-500);
+  margin-top: -10px; margin-bottom: 14px;
+}
+
+/* Ingredient list */
+.ingredient-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.ingredient-check {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-300);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s;
+  flex-shrink: 0; background: white;
+  font-size: 12px; color: transparent;
+}
+.ingredient-check.checked {
+  background: var(--primary); border-color: var(--primary);
+  color: white;
+}
+.ingredient-text { font-size: 15px; color: var(--gray-700); }
+.ingredient-text.checked { text-decoration: line-through; color: var(--gray-400); }
+
+/* Step */
+.step-item {
+  display: flex; gap: 14px; margin-bottom: 20px;
+}
+.step-number {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  flex-shrink: 0;
+}
+.step-text { font-size: 15px; color: var(--gray-700); line-height: 1.5; padding-top: 4px; }
+
+/* Unit Converter */
+.converter-display {
+  background: var(--primary-bg);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.converter-value {
+  font-size: 40px; font-weight: 700;
+  color: var(--primary-dark);
+}
+.converter-unit { font-size: 16px; color: var(--primary); margin-top: 4px; }
+.converter-swap {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white; border: none;
+  cursor: pointer; font-size: 20px;
+  margin: 0 auto; display: flex;
+  align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.converter-swap:hover { transform: rotate(180deg); }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 40px 20px;
+}
+.empty-state i { font-size: 48px; color: var(--gray-300); margin-bottom: 16px; }
+.empty-state h3 { font-size: 18px; color: var(--gray-600); margin-bottom: 8px; }
+.empty-state p { font-size: 14px; color: var(--gray-400); }
+
+/* Profile */
+.profile-header {
+  text-align: center; padding: 30px 20px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+}
+.profile-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin: 0 auto 12px;
+  border: 3px solid rgba(255,255,255,0.4);
+}
+.profile-name { font-size: 22px; font-weight: 700; }
+.profile-email { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+
+/* Cooking Vibes */
+.vibe-card {
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+  text-align: center;
+}
+.vibe-card.active { border-color: var(--primary); background: var(--primary-bg); }
+.vibe-card:hover { transform: scale(1.02); }
+.vibe-icon { font-size: 40px; margin-bottom: 10px; }
+.vibe-name { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+
+/* AI Loading */
+.ai-loading {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 20px; font-size: 15px;
+  color: var(--primary);
+}
+.ai-loading i { animation: spin 1s linear infinite; }
+
+/* Substitutes */
+.sub-card {
+  background: var(--gray-50);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.sub-original {
+  font-size: 16px; font-weight: 600;
+  color: var(--gray-800); margin-bottom: 8px;
+}
+.sub-arrow { color: var(--primary); margin: 0 8px; }
+.sub-replacement {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; font-size: 14px; color: var(--gray-600);
+}
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+/* Utility */
+.px-20 { padding-left: 20px; padding-right: 20px; }
+.py-20 { padding-top: 20px; padding-bottom: 20px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; }
+.text-center { text-align: center; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-10 { gap: 10px; }
+.gap-12 { gap: 12px; }
+.w-full { width: 100%; }
+
+/* Hero Banner */
+.hero-banner {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  padding: 24px 20px;
+  border-radius: 0 0 24px 24px;
+  margin-bottom: 20px;
+}
+.hero-banner h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.hero-banner p { font-size: 14px; opacity: 0.85; }
+
+/* Sidebar/Menu */
+.sidebar-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 500;
+  animation: fadeIn 0.2s;
+}
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: 280px; max-width: 80%;
+  background: white;
+  z-index: 501;
+  padding: 0;
+  animation: slideIn 0.3s ease-out;
+  overflow-y: auto;
+}
+@keyframes slideIn { from { transform:translateX(-100%); } to { transform:translateX(0); } }
+.sidebar-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white; padding: 30px 20px;
+}
+.sidebar-menu-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px;
+  cursor: pointer; transition: all 0.2s;
+  border: none; background: none; width: 100%;
+  text-align: left; font-size: 15px;
+  color: var(--gray-700); font-family: inherit;
+}
+.sidebar-menu-item:hover { background: var(--gray-50); }
+.sidebar-menu-item i { width: 24px; text-align: center; color: var(--gray-400); }
+.sidebar-menu-item.active { color: var(--primary); background: var(--primary-bg); }
+.sidebar-menu-item.active i { color: var(--primary); }
+
+/* Divider */
+.divider {
+  height: 1px; background: var(--gray-200);
+  margin: 8px 0;
+}
+
+/* Match score */
+.match-score {
+  font-size: 28px; font-weight: 700;
+  color: var(--primary);
+}
+.match-label { font-size: 12px; color: var(--gray-500); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+// ============================================================
+// DATA
+// ============================================================
+const RECIPES = [
+  {
+    id: 1, name: "Garlic Butter Pasta",
+    category: "Pasta", time: 20, servings: 4, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=400&fit=crop",
+    ingredients: ["pasta", "butter", "garlic", "salt", "pepper", "parmesan cheese", "parsley"],
+    amounts: ["400g spaghetti", "4 tbsp butter", "6 cloves garlic, minced", "1 tsp salt", "1/2 tsp pepper", "1/2 cup parmesan", "Fresh parsley"],
+    steps: ["Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.", "While pasta cooks, melt butter in a large skillet over medium heat. Add minced garlic and cook for 1-2 minutes until fragrant.", "Drain pasta, reserving 1 cup of pasta water. Add pasta to the skillet with the garlic butter.", "Toss well, adding pasta water as needed for a silky sauce. Season with salt and pepper.", "Serve topped with freshly grated parmesan cheese and chopped parsley."],
+    tags: ["quick", "vegetarian", "comfort food"]
+  },
+  {
+    id: 2, name: "Cheese Toast",
+    category: "Snack", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop",
+    ingredients: ["bread", "cheese", "butter", "garlic powder"],
+    amounts: ["4 slices bread", "1 cup shredded cheese", "2 tbsp butter, softened", "1/2 tsp garlic powder"],
+    steps: ["Preheat your oven broiler to high.", "Spread butter on one side of each bread slice and place on a baking sheet.", "Sprinkle garlic powder evenly, then top generously with shredded cheese.", "Broil for 2-3 minutes until cheese is bubbly and golden brown.", "Let cool slightly before serving."],
+    tags: ["quick", "snack", "vegetarian"]
+  },
+  {
+    id: 3, name: "Classic Caesar Salad",
+    category: "Salad", time: 15, servings: 4, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&h=400&fit=crop",
+    ingredients: ["romaine lettuce", "parmesan cheese", "croutons", "lemon", "olive oil", "garlic", "egg", "anchovy"],
+    amounts: ["2 heads romaine lettuce", "1/2 cup shaved parmesan", "1.5 cups croutons", "2 tbsp lemon juice", "1/3 cup olive oil", "2 cloves garlic", "1 egg yolk", "2 anchovy fillets"],
+    steps: ["Wash and chop romaine lettuce into bite-sized pieces. Pat dry and place in a large bowl.", "Make the dressing: blend egg yolk, garlic, anchovies, lemon juice, and olive oil until smooth.", "Pour dressing over lettuce and toss thoroughly to coat every leaf.", "Add croutons and half the parmesan, toss again gently.", "Serve immediately topped with remaining parmesan shavings."],
+    tags: ["healthy", "classic", "salad"]
+  },
+  {
+    id: 4, name: "Chicken Stir Fry",
+    category: "Main", time: 25, servings: 4, difficulty: "Medium",
+    image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&h=400&fit=crop",
+    ingredients: ["chicken breast", "soy sauce", "bell pepper", "broccoli", "garlic", "ginger", "sesame oil", "rice", "cornstarch", "onion"],
+    amounts: ["500g chicken breast, sliced", "3 tbsp soy sauce", "2 bell peppers, sliced", "2 cups broccoli florets", "3 cloves garlic", "1 tbsp fresh ginger", "2 tbsp sesame oil", "2 cups cooked rice", "1 tbsp cornstarch", "1 onion, sliced"],
+    steps: ["Slice chicken and toss with cornstarch, 1 tbsp soy sauce. Let marinate for 10 minutes.", "Heat sesame oil in a wok or large skillet over high heat.", "Cook chicken in batches until golden brown, about 3-4 minutes per batch. Set aside.", "Add vegetables, garlic, and ginger to the wok. Stir fry for 3-4 minutes until tender-crisp.", "Return chicken to wok, add remaining soy sauce, toss everything together.", "Serve hot over steamed rice."],
+    tags: ["protein", "asian", "healthy"]
+  },
+  {
+    id: 5, name: "Avocado Toast",
+    category: "Breakfast", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=600&h=400&fit=crop",
+    ingredients: ["bread", "avocado", "lemon", "salt", "pepper", "red pepper flakes", "egg"],
+    amounts: ["2 slices sourdough bread", "1 ripe avocado", "1 tbsp lemon juice", "1/2 tsp salt", "1/4 tsp pepper", "Pinch of red pepper flakes", "2 eggs (optional)"],
+    steps: ["Toast bread slices until golden and crispy.", "Cut avocado in half, remove pit, and scoop into a bowl. Add lemon juice, salt, and pepper.", "Mash avocado with a fork to desired consistency (chunky or smooth).", "Spread mashed avocado generously on each toast.", "Top with red pepper flakes and optionally a poached or fried egg."],
+    tags: ["breakfast", "healthy", "quick", "vegetarian"]
+  },
+  {
+    id: 6, name: "Tomato Soup",
+    category: "Soup", time: 35, servings: 6, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop",
+    ingredients: ["tomatoes", "onion", "garlic", "olive oil", "vegetable broth", "basil", "cream", "salt", "pepper", "sugar"],
+    amounts: ["800g canned tomatoes", "1 large onion, diced", "4 cloves garlic", "2 tbsp olive oil", "2 cups vegetable broth", "Fresh basil leaves", "1/4 cup cream", "Salt to taste", "Pepper to taste", "1 tsp sugar"],
+    steps: ["Heat olive oil in a large pot. Add diced onion and cook for 5 minutes until soft.", "Add garlic and cook for 1 minute until fragrant.", "Add canned tomatoes, vegetable broth, and sugar. Bring to a boil.", "Reduce heat and simmer for 20 minutes. Add basil leaves.", "Blend until smooth using an immersion blender. Stir in cream, season with salt and pepper.", "Serve hot with crusty bread or grilled cheese."],
+    tags: ["soup", "comfort food", "vegetarian"]
+  },
+  {
+    id: 7, name: "Banana Pancakes",
+    category: "Breakfast", time: 20, servings: 4, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&h=400&fit=crop",
+    ingredients: ["banana", "egg", "flour", "milk", "baking powder", "sugar", "butter", "vanilla extract", "maple syrup"],
+    amounts: ["2 ripe bananas", "2 eggs", "1 cup flour", "3/4 cup milk", "1 tsp baking powder", "1 tbsp sugar", "2 tbsp melted butter", "1 tsp vanilla extract", "Maple syrup for serving"],
+    steps: ["Mash bananas in a large bowl until smooth.", "Add eggs, milk, melted butter, and vanilla. Whisk well.", "Add flour, baking powder, and sugar. Mix until just combined (don't overmix).", "Heat a non-stick pan over medium heat. Grease lightly with butter.", "Pour 1/4 cup batter per pancake. Cook until bubbles form on surface, flip and cook 1-2 more minutes.", "Serve stacked with maple syrup and sliced banana."],
+    tags: ["breakfast", "sweet", "vegetarian"]
+  },
+  {
+    id: 8, name: "Mediterranean Bowl",
+    category: "Main", time: 30, servings: 2, difficulty: "Medium",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop",
+    ingredients: ["quinoa", "cucumber", "tomatoes", "red onion", "olives", "feta cheese", "olive oil", "lemon", "chickpeas", "hummus"],
+    amounts: ["1 cup quinoa", "1 cucumber, diced", "1 cup cherry tomatoes", "1/4 red onion", "1/2 cup kalamata olives", "100g feta cheese", "3 tbsp olive oil", "2 tbsp lemon juice", "1 can chickpeas", "4 tbsp hummus"],
+    steps: ["Cook quinoa according to package directions. Let cool slightly.", "Dice cucumber, halve tomatoes, thinly slice red onion.", "Drain and rinse chickpeas.", "Arrange quinoa in bowls. Top with vegetables, chickpeas, olives, and crumbled feta.", "Drizzle with olive oil and lemon juice.", "Add a generous dollop of hummus on the side. Serve."],
+    tags: ["healthy", "mediterranean", "vegetarian"]
+  },
+  {
+    id: 9, name: "Chocolate Mug Cake",
+    category: "Dessert", time: 5, servings: 1, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&h=400&fit=crop",
+    ingredients: ["flour", "sugar", "cocoa powder", "milk", "vegetable oil", "egg", "vanilla extract", "baking powder"],
+    amounts: ["4 tbsp flour", "3 tbsp sugar", "2 tbsp cocoa powder", "3 tbsp milk", "2 tbsp vegetable oil", "1 egg", "1/2 tsp vanilla", "1/4 tsp baking powder"],
+    steps: ["In a large microwave-safe mug, mix flour, sugar, cocoa powder, and baking powder.", "Add egg, milk, oil, and vanilla extract. Mix until smooth with no lumps.", "Microwave on high for 1 minute 30 seconds to 2 minutes.", "Let it cool for 1 minute (it will be hot!).", "Top with whipped cream, ice cream, or powdered sugar and enjoy!"],
+    tags: ["dessert", "quick", "sweet"]
+  },
+  {
+    id: 10, name: "Grilled Salmon",
+    category: "Main", time: 25, servings: 2, difficulty: "Medium",
+    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&h=400&fit=crop",
+    ingredients: ["salmon", "lemon", "garlic", "olive oil", "dill", "salt", "pepper", "asparagus"],
+    amounts: ["2 salmon fillets", "1 lemon", "3 cloves garlic, minced", "2 tbsp olive oil", "Fresh dill", "Salt to taste", "Pepper to taste", "1 bunch asparagus"],
+    steps: ["Preheat grill to medium-high heat (or oven to 200°C/400°F).", "Mix olive oil, minced garlic, lemon juice, salt, and pepper to make a marinade.", "Brush salmon fillets generously with the marinade.", "Grill salmon skin-side down for 4-5 minutes per side until flaky.", "Grill asparagus alongside for 3-4 minutes.", "Serve with fresh dill and lemon wedges."],
+    tags: ["protein", "healthy", "seafood"]
+  },
+  {
+    id: 11, name: "Veggie Wrap",
+    category: "Lunch", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&h=400&fit=crop",
+    ingredients: ["tortilla", "hummus", "lettuce", "tomatoes", "cucumber", "bell pepper", "avocado", "feta cheese"],
+    amounts: ["2 large tortillas", "4 tbsp hummus", "2 cups lettuce", "1 tomato, sliced", "1/2 cucumber", "1 bell pepper", "1 avocado", "50g feta cheese"],
+    steps: ["Lay tortillas flat and spread hummus generously across the center.", "Layer lettuce, sliced tomato, cucumber, and bell pepper strips.", "Add sliced avocado and crumbled feta cheese.", "Fold the bottom edge up, then fold in the sides and roll tightly.", "Cut in half diagonally and serve immediately."],
+    tags: ["lunch", "healthy", "vegetarian", "quick"]
+  },
+  {
+    id: 12, name: "Berry Smoothie Bowl",
+    category: "Breakfast", time: 10, servings: 1, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&h=400&fit=crop",
+    ingredients: ["mixed berries", "banana", "yogurt", "granola", "honey", "chia seeds", "coconut flakes"],
+    amounts: ["1 cup frozen mixed berries", "1 frozen banana", "1/2 cup Greek yogurt", "1/4 cup granola", "1 tbsp honey", "1 tbsp chia seeds", "1 tbsp coconut flakes"],
+    steps: ["Blend frozen berries, banana, and yogurt until thick and smooth.", "Pour into a bowl — it should be thicker than a regular smoothie.", "Top with granola, chia seeds, and coconut flakes in neat rows.", "Drizzle with honey.", "Serve immediately and enjoy with a spoon!"],
+    tags: ["breakfast", "healthy", "sweet", "vegetarian"]
+  }
+];
+
+const CATEGORIES = ["All", "Breakfast", "Lunch", "Main", "Pasta", "Salad", "Soup", "Snack", "Dessert"];
+
+const SUBSTITUTES = [
+  { original: "Butter", subs: ["Coconut oil (1:1 ratio)", "Olive oil (3/4 amount)", "Greek yogurt (half amount)", "Applesauce (for baking)"] },
+  { original: "Eggs", subs: ["1/4 cup applesauce per egg", "1 mashed banana per egg", "3 tbsp aquafaba per egg", "1 tbsp ground flaxseed + 3 tbsp water"] },
+  { original: "Milk", subs: ["Oat milk (1:1)", "Almond milk (1:1)", "Coconut milk (1:1)", "Soy milk (1:1)"] },
+  { original: "Heavy Cream", subs: ["Coconut cream", "Cashew cream", "Evaporated milk", "Silken tofu blended"] },
+  { original: "All-Purpose Flour", subs: ["Almond flour (3/4 amount)", "Oat flour (1:1)", "Coconut flour (1/4 amount)", "Whole wheat flour (1:1)"] },
+  { original: "Sugar", subs: ["Honey (3/4 amount)", "Maple syrup (3/4 amount)", "Stevia (1/4 tsp per cup)", "Coconut sugar (1:1)"] },
+  { original: "Soy Sauce", subs: ["Coconut aminos (1:1)", "Tamari (1:1)", "Worcestershire sauce (less amount)", "Salt + splash of vinegar"] },
+  { original: "Parmesan", subs: ["Nutritional yeast", "Pecorino Romano", "Aged Asiago", "Grana Padano"] },
+  { original: "Breadcrumbs", subs: ["Crushed crackers", "Rolled oats", "Crushed cornflakes", "Almond meal"] },
+  { original: "Lemon Juice", subs: ["Lime juice (1:1)", "White wine vinegar (1/2 amount)", "Apple cider vinegar (1/2 amount)", "Orange juice (1:1)"] }
+];
+
+const UNIT_CONVERSIONS = {
+  "Cups to ML": { from: "cups", to: "ml", factor: 236.588 },
+  "ML to Cups": { from: "ml", to: "cups", factor: 1/236.588 },
+  "Tbsp to ML": { from: "tbsp", to: "ml", factor: 14.787 },
+  "Tsp to ML": { from: "tsp", to: "ml", factor: 4.929 },
+  "Oz to Grams": { from: "oz", to: "g", factor: 28.3495 },
+  "Grams to Oz": { from: "g", to: "oz", factor: 1/28.3495 },
+  "Lbs to Kg": { from: "lbs", to: "kg", factor: 0.4536 },
+  "Kg to Lbs": { from: "kg", to: "lbs", factor: 2.2046 },
+  "°F to °C": { from: "°F", to: "°C", factor: null, convert: v => (v - 32) * 5/9 },
+  "°C to °F": { from: "°C", to: "°F", factor: null, convert: v => v * 9/5 + 32 },
+};
+
+const VIBES = [
+  { id: "jazz", name: "Jazz Lounge", icon: "🎷", color: "#4f46e5", desc: "Smooth jazz for elegant cooking" },
+  { id: "italian", name: "Italian Kitchen", icon: "🇮🇹", color: "#dc2626", desc: "Classic Italian cooking vibes" },
+  { id: "chill", name: "Chill & Cook", icon: "🎵", color: "#0891b2", desc: "Relaxed lo-fi beats" },
+  { id: "party", name: "Kitchen Party", icon: "🎉", color: "#c026d3", desc: "Upbeat party cooking energy" },
+  { id: "nature", name: "Nature Sounds", icon: "🌿", color: "#16a34a", desc: "Calming nature ambiance" },
+  { id: "focus", name: "Deep Focus", icon: "🧘", color: "#ea580c", desc: "Minimal sounds for concentration" },
+];
+
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+// ============================================================
+// UTILITY HOOKS
+// ============================================================
+function useLocalStorage(key, initialValue) {
+  const [value, setValue] = useState(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch { return initialValue; }
+  });
+  useEffect(() => {
+    try { window.localStorage.setItem(key, JSON.stringify(value)); } catch {}
+  }, [key, value]);
+  return [value, setValue];
+}
+
+// ============================================================
+// TOAST COMPONENT
+// ============================================================
+function Toast({ message, onClose }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 2500);
+    return () => clearTimeout(timer);
+  }, []);
+  return <div className="toast">{message}</div>;
+}
+
+// ============================================================
+// SIDEBAR MENU
+// ============================================================
+function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
+  if (!isOpen) return null;
+  const menuItems = [
+    { id: "recipes", icon: "fa-utensils", label: "Recipes List" },
+    { id: "kitchen", icon: "fa-hat-wizard", label: "Kitchen Helper" },
+    { id: "planner", icon: "fa-calendar-week", label: "Meal Planner" },
+    { id: "favorites", icon: "fa-heart", label: "Favorites" },
+    { id: "contact", icon: "fa-envelope", label: "Contact" },
+    { id: "profile", icon: "fa-user", label: "User Profile" },
+  ];
+  return (
+    <>
+      <div className="sidebar-overlay" onClick={onClose} />
+      <div className="sidebar">
+        <div className="sidebar-header">
+          <div style={{fontSize:28,fontWeight:800,marginBottom:4}}>🍽️ DinnerDone</div>
+          <div style={{fontSize:13,opacity:0.8}}>Your Kitchen Companion</div>
+        </div>
+        {menuItems.map(item => (
+          <button key={item.id} className={`sidebar-menu-item ${currentPage===item.id?'active':''}`}
+            onClick={() => { onNavigate(item.id); onClose(); }}>
+            <i className={`fas ${item.icon}`} />
+            {item.label}
+          </button>
+        ))}
+        <div className="divider" />
+        <div style={{padding:'14px 20px', fontSize:12, color:'var(--gray-400)'}}>
+          DinnerDone v2.0 — Enhanced MVP
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ============================================================
+// HEADER
+// ============================================================
+function Header({ title, onMenuOpen, onBack, rightAction }) {
+  return (
+    <div className="header">
+      {onBack ? (
+        <button className="header-icon" onClick={onBack}><i className="fas fa-arrow-left" /></button>
+      ) : (
+        <button className="header-icon" onClick={onMenuOpen}><i className="fas fa-bars" /></button>
+      )}
+      <h1>{title}</h1>
+      {rightAction || <div style={{width:40}} />}
+    </div>
+  );
+}
+
+// ============================================================
+// BOTTOM NAV
+// ============================================================
+function BottomNav({ current, onNavigate }) {
+  const items = [
+    { id: "recipes", icon: "fa-utensils", label: "Recipes" },
+    { id: "kitchen", icon: "fa-hat-wizard", label: "Helper" },
+    { id: "planner", icon: "fa-calendar-week", label: "Planner" },
+    { id: "favorites", icon: "fa-heart", label: "Favorites" },
+    { id: "profile", icon: "fa-user", label: "Profile" },
+  ];
+  return (
+    <div className="bottom-nav">
+      {items.map(item => (
+        <button key={item.id} className={`nav-item ${current===item.id?'active':''}`}
+          onClick={() => onNavigate(item.id)}>
+          <i className={`fas ${item.icon}`} />
+          <span>{item.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
+// RECIPES LIST PAGE
+// ============================================================
+function RecipesList({ onSelectRecipe, favorites, onToggleFav }) {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
+
+  const filtered = useMemo(() => {
+    return RECIPES.filter(r => {
+      const matchSearch = !search || r.name.toLowerCase().includes(search.toLowerCase()) ||
+        r.ingredients.some(i => i.toLowerCase().includes(search.toLowerCase()));
+      const matchCat = category === "All" || r.category === category;
+      return matchSearch && matchCat;
+    });
+  }, [search, category]);
+
+  return (
+    <div className="fade-in">
+      <div className="hero-banner">
+        <h2>What's Cooking? 👨‍🍳</h2>
+        <p>Find your next delicious meal</p>
+      </div>
+      <div className="search-bar">
+        <i className="fas fa-search" />
+        <input type="text" placeholder="Search recipes or ingredients..."
+          value={search} onChange={e => setSearch(e.target.value)} />
+        {search && <button style={{background:'none',border:'none',color:'var(--gray-400)',cursor:'pointer'}}
+          onClick={() => setSearch("")}><i className="fas fa-times" /></button>}
+      </div>
+      <div className="tags-container">
+        {CATEGORIES.map(c => (
+          <button key={c} className={`tag ${category===c?'active':''}`}
+            onClick={() => setCategory(c)}>{c}</button>
+        ))}
+      </div>
+      <div className="px-20" style={{paddingBottom:20}}>
+        {filtered.length === 0 ? (
+          <div className="empty-state">
+            <i className="fas fa-search" />
+            <h3>No recipes found</h3>
+            <p>Try a different search term or category</p>
+          </div>
+        ) : (
+          <div style={{display:'flex',flexDirection:'column',gap:16}}>
+            {filtered.map((recipe, i) => (
+              <div key={recipe.id} className="card recipe-card slide-up"
+                style={{animationDelay: `${i*0.05}s`}}
+                onClick={() => onSelectRecipe(recipe)}>
+                <div style={{position:'relative'}}>
+                  <img src={recipe.image} alt={recipe.name} loading="lazy" />
+                  <button className={`fav-btn-hero ${favorites.includes(recipe.id)?'active':''}`}
+                    onClick={e => { e.stopPropagation(); onToggleFav(recipe.id); }}>
+                    <i className={`${favorites.includes(recipe.id)?'fas':'far'} fa-heart`} />
+                  </button>
+                  <div style={{position:'absolute',bottom:12,left:12}}>
+                    <span className="badge badge-primary">{recipe.category}</span>
+                  </div>
+                </div>
+                <div className="recipe-card-body">
+                  <div className="recipe-card-title">{recipe.name}</div>
+                  <div className="recipe-card-desc">{recipe.amounts.join(", ")}</div>
+                  <div className="recipe-card-meta">
+                    <span><i className="far fa-clock" /> {recipe.time} min</span>
+                    <span><i className="fas fa-users" /> {recipe.servings} servings</span>
+                    <span className={`badge ${recipe.difficulty==='Easy'?'badge-success':'badge-accent'}`}>
+                      {recipe.difficulty}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// RECIPE DETAIL PAGE
+// ============================================================
+function RecipeDetail({ recipe, onBack, isFav, onToggleFav }) {
+  const [checkedIngredients, setCheckedIngredients] = useState([]);
+  const [servingMultiplier, setServingMultiplier] = useState(1);
+
+  const toggleIngredient = (idx) => {
+    setCheckedIngredients(prev =>
+      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+    );
+  };
+
+  return (
+    <div className="fade-in">
+      <div className="recipe-hero">
+        <img src={recipe.image} alt={recipe.name} />
+        <button className="back-btn" onClick={onBack}><i className="fas fa-arrow-left" /></button>
+        <button className={`fav-btn-hero ${isFav?'active':''}`} onClick={onToggleFav}>
+          <i className={`${isFav?'fas':'far'} fa-heart`} />
+        </button>
+        <div className="recipe-hero-overlay">
+          <div className="recipe-hero-title">{recipe.name}</div>
+          <div className="recipe-hero-meta">
+            <span><i className="far fa-clock" /> {recipe.time} min</span>
+            <span><i className="fas fa-users" /> {recipe.servings} servings</span>
+            <span><i className="fas fa-signal" /> {recipe.difficulty}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Serving Adjuster */}
+      <div className="section" style={{paddingBottom:0}}>
+        <div className="flex items-center justify-between">
+          <span style={{fontSize:14,fontWeight:600,color:'var(--gray-700)'}}>Adjust Servings</span>
+          <div className="flex items-center gap-12">
+            <button className="btn btn-secondary btn-sm"
+              onClick={() => setServingMultiplier(Math.max(0.5, servingMultiplier - 0.5))}>
+              <i className="fas fa-minus" />
+            </button>
+            <span style={{fontSize:18,fontWeight:700,minWidth:30,textAlign:'center'}}>
+              {Math.round(recipe.servings * servingMultiplier)}
+            </span>
+            <button className="btn btn-secondary btn-sm"
+              onClick={() => setServingMultiplier(servingMultiplier + 0.5)}>
+              <i className="fas fa-plus" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Ingredients */}
+      <div className="section">
+        <div className="section-title">
+          Ingredients
+          <span style={{fontSize:13,fontWeight:400,color:'var(--gray-400)',marginLeft:8}}>
+            {checkedIngredients.length}/{recipe.amounts.length}
+          </span>
+        </div>
+        <div className="progress-bar mb-16">
+          <div className="progress-fill"
+            style={{width:`${(checkedIngredients.length/recipe.amounts.length)*100}%`}} />
+        </div>
+        {recipe.amounts.map((amount, idx) => {
+          const checked = checkedIngredients.includes(idx);
+          return (
+            <div key={idx} className="ingredient-item" onClick={() => toggleIngredient(idx)}>
+              <div className={`ingredient-check ${checked?'checked':''}`}>
+                {checked && <i className="fas fa-check" />}
+              </div>
+              <span className={`ingredient-text ${checked?'checked':''}`}>{amount}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Steps */}
+      <div className="section">
+        <div className="section-title">Instructions</div>
+        {recipe.steps.map((step, idx) => (
+          <div key={idx} className="step-item">
+            <div className="step-number">{idx + 1}</div>
+            <div className="step-text">{step}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tags */}
+      <div className="section" style={{paddingBottom:100}}>
+        <div className="section-title">Tags</div>
+        <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+          {recipe.tags.map(tag => (
+            <span key={tag} className="badge badge-primary" style={{fontSize:13,padding:'6px 14px'}}>
+              #{tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// KITCHEN HELPER PAGE
+// ============================================================
+function KitchenHelper({ onNavigateTool }) {
+  const tools = [
+    { id: "timer", name: "Kitchen Timer", icon: "fa-stopwatch", color: "#0d9488", desc: "Set multiple cooking timers" },
+    { id: "converter", name: "Unit Converter", icon: "fa-exchange-alt", color: "#6366f1", desc: "Convert cooking measurements" },
+    { id: "substitutes", name: "Ingredient Substitutes", icon: "fa-sync-alt", color: "#ea580c", desc: "Find ingredient alternatives" },
+    { id: "vibes", name: "Cooking Vibes", icon: "fa-headphones", color: "#c026d3", desc: "Set the mood for cooking" },
+    { id: "fridge", name: "Empty Fridge Rescue", icon: "fa-cart-shopping", color: "#16a34a", desc: "AI-powered recipe suggestions" },
+  ];
+
+  return (
+    <div className="fade-in">
+      <div className="hero-banner" style={{background:'linear-gradient(135deg, #6366f1, #8b5cf6)'}}>
+        <h2>Kitchen Helper 🧑‍🍳</h2>
+        <p>Smart tools for better cooking</p>
+      </div>
+      <div style={{padding:'0 0 20px'}}>
+        {tools.map((tool, i) => (
+          <div key={tool.id} className="action-row slide-up" style={{animationDelay:`${i*0.05}s`}}
+            onClick={() => onNavigateTool(tool.id)}>
+            <div className="action-row-icon" style={{background:`${tool.color}15`, color:tool.color}}>
+              <i className={`fas ${tool.icon}`} />
+            </div>
+            <div className="action-row-content">
+              <div className="action-row-title">
+                {tool.name}
+                {tool.id === 'fridge' && <span className="ai-badge" style={{marginLeft:8}}>
+                  <i className="fas fa-wand-magic-sparkles" /> AI
+                </span>}
+              </div>
+              <div className="action-row-subtitle">{tool.desc}</div>
+            </div>
+            <i className="fas fa-chevron-right action-row-chevron" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// KITCHEN TIMER
+// ============================================================
+function KitchenTimer({ onBack }) {
+  const [timers, setTimers] = useState([{ id: 1, name: "Timer 1", total: 300, remaining: 300, running: false }]);
+  const intervalsRef = useRef({});
+  const [inputMin, setInputMin] = useState("5");
+  const [inputName, setInputName] = useState("");
+
+  useEffect(() => {
+    return () => Object.values(intervalsRef.current).forEach(clearInterval);
+  }, []);
+
+  const startTimer = (id) => {
+    setTimers(prev => prev.map(t => t.id === id ? {...t, running: true} : t));
+    intervalsRef.current[id] = setInterval(() => {
+      setTimers(prev => prev.map(t => {
+        if (t.id === id && t.remaining > 0) return {...t, remaining: t.remaining - 1};
+        if (t.id === id && t.remaining <= 0) {
+          clearInterval(intervalsRef.current[id]);
+          try { new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbsGczHj15qN/TtWY5JkF6rdvQtWk+LUV6rtjPsmxBME1+sNnPs25BNFJ/s9fQsnBDOFWCtdXMsG5DP1iFt9TJrWtAQFqJudTHqmZBQ2GNvNPDpmE/RWSQvtHBo14+R2eTwc++oVs9SGyVw8q6n1g8S26Yysa2nFQ4T3SdzcKxmE01UHajz7+skEkxUXuoz7ynhkIuVoKv0LijfTsqWomz0bSegTYnX46308+YdjEkY5W51cqScysgaJu+1sSObiAhbaDC18CDZRwldqbH18B+YBcod6vK1b14WxQrfK/M1LlyVBEvgbPP0rVsThAzhrnR0bFmSQw4i73T0KxgRAs+kcDUzaZZPgo/lcTVyaFUOQlDmsjWxZtONQZHn8zYwJVIMQRLpNDZu49CKwNPqdTbtIg9JwJTrtjcrYI3IgFYs9zfqHwxHgBdud/hmXYrGgBjv+PjsHYrGQ5nxufptncsHA5qy+vvvn4zIBJt0e/zy4Y8LRpx1vP30o1GMCd12fb60ptMOCB93/r635tWSSsvhOf/8O6rdGVcR0V7jf8A').play(); } catch {}
+          return {...t, running: false, remaining: 0};
+        }
+        return t;
+      }));
+    }, 1000);
+  };
+
+  const pauseTimer = (id) => {
+    clearInterval(intervalsRef.current[id]);
+    setTimers(prev => prev.map(t => t.id === id ? {...t, running: false} : t));
+  };
+
+  const resetTimer = (id) => {
+    clearInterval(intervalsRef.current[id]);
+    setTimers(prev => prev.map(t => t.id === id ? {...t, remaining: t.total, running: false} : t));
+  };
+
+  const removeTimer = (id) => {
+    clearInterval(intervalsRef.current[id]);
+    setTimers(prev => prev.filter(t => t.id !== id));
+  };
+
+  const addTimer = () => {
+    const mins = parseInt(inputMin) || 5;
+    const id = Date.now();
+    setTimers(prev => [...prev, { id, name: inputName || `Timer ${prev.length + 1}`, total: mins * 60, remaining: mins * 60, running: false }]);
+    setInputName("");
+    setInputMin("5");
+  };
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  return (
+    <div className="fade-in page-container">
+      <Header title="Kitchen Timer" onBack={onBack} />
+      <div className="section">
+        <div className="grid-2 mb-20">
+          <div className="input-group" style={{marginBottom:0}}>
+            <label>Timer Name</label>
+            <input className="input" placeholder="e.g., Pasta" value={inputName} onChange={e => setInputName(e.target.value)} />
+          </div>
+          <div className="input-group" style={{marginBottom:0}}>
+            <label>Minutes</label>
+            <input className="input" type="number" min="1" value={inputMin} onChange={e => setInputMin(e.target.value)} />
+          </div>
+        </div>
+        <button className="btn btn-primary btn-full" onClick={addTimer}>
+          <i className="fas fa-plus" /> Add Timer
+        </button>
+      </div>
+      <div className="section" style={{paddingTop:0}}>
+        {timers.map(timer => (
+          <div key={timer.id} className="card mb-16" style={{padding:20}}>
+            <div className="flex items-center justify-between mb-16">
+              <div>
+                <div style={{fontWeight:600,fontSize:16}}>{timer.name}</div>
+                <div style={{fontSize:12,color:'var(--gray-400)'}}>
+                  Total: {formatTime(timer.total)}
+                </div>
+              </div>
+              <button className="btn btn-danger btn-sm" onClick={() => removeTimer(timer.id)}>
+                <i className="fas fa-trash" />
+              </button>
+            </div>
+            <div className={`timer-circle ${timer.running?'running':''}`} style={{width:160,height:160,margin:'0 auto 16px'}}>
+              <div style={{fontSize:36,fontWeight:700,fontVariantNumeric:'tabular-nums',
+                color: timer.remaining === 0 ? 'var(--danger)' : timer.running ? 'var(--primary)' : 'var(--gray-900)'}}>
+                {formatTime(timer.remaining)}
+              </div>
+            </div>
+            <div className="progress-bar mb-16">
+              <div className="progress-fill" style={{width:`${(timer.remaining/timer.total)*100}%`,
+                background: timer.remaining === 0 ? 'var(--danger)' : undefined}} />
+            </div>
+            <div className="flex gap-10">
+              {!timer.running && timer.remaining > 0 && (
+                <button className="btn btn-primary" style={{flex:1}} onClick={() => startTimer(timer.id)}>
+                  <i className="fas fa-play" /> Start
+                </button>
+              )}
+              {timer.running && (
+                <button className="btn btn-accent" style={{flex:1}} onClick={() => pauseTimer(timer.id)}>
+                  <i className="fas fa-pause" /> Pause
+                </button>
+              )}
+              <button className="btn btn-secondary" style={{flex:1}} onClick={() => resetTimer(timer.id)}>
+                <i className="fas fa-redo" /> Reset
+              </button>
+            </div>
+            {timer.remaining === 0 && (
+              <div style={{textAlign:'center',marginTop:12,color:'var(--danger)',fontWeight:600,fontSize:15}}>
+                ⏰ Time's up!
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// UNIT CONVERTER
+// ============================================================
+function UnitConverter({ onBack }) {
+  const [convType, setConvType] = useState("Cups to ML");
+  const [inputVal, setInputVal] = useState("1");
+
+  const convert = () => {
+    const val = parseFloat(inputVal) || 0;
+    const conv = UNIT_CONVERSIONS[convType];
+    if (conv.convert) return conv.convert(val).toFixed(2);
+    return (val * conv.factor).toFixed(2);
+  };
+
+  const result = convert();
+  const conv = UNIT_CONVERSIONS[convType];
+
+  return (
+    <div className="fade-in page-container">
+      <Header title="Unit Converter" onBack={onBack} />
+      <div className="section">
+        <div className="converter-display">
+          <div style={{fontSize:14,color:'var(--primary)',marginBottom:8,fontWeight:500}}>Result</div>
+          <div className="converter-value">{result}</div>
+          <div className="converter-unit">{conv.to}</div>
+        </div>
+        <div className="input-group">
+          <label>Conversion Type</label>
+          <select className="select" value={convType} onChange={e => setConvType(e.target.value)}>
+            {Object.keys(UNIT_CONVERSIONS).map(k => <option key={k} value={k}>{k}</option>)}
+          </select>
+        </div>
+        <div className="input-group">
+          <label>Value ({conv.from})</label>
+          <input className="input" type="number" value={inputVal} onChange={e => setInputVal(e.target.value)}
+            style={{fontSize:24,fontWeight:600,textAlign:'center'}} />
+        </div>
+        {/* Quick values */}
+        <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:12}}>
+          {[0.25, 0.5, 1, 2, 3, 5].map(v => (
+            <button key={v} className={`tag ${parseFloat(inputVal)===v?'active':''}`}
+              onClick={() => setInputVal(String(v))}>{v}</button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// INGREDIENT SUBSTITUTES
+// ============================================================
+function IngredientSubstitutes({ onBack }) {
+  const [search, setSearch] = useState("");
+  const filtered = SUBSTITUTES.filter(s =>
+    !search || s.original.toLowerCase().includes(search.toLowerCase()) ||
+    s.subs.some(sub => sub.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  return (
+    <div className="fade-in page-container">
+      <Header title="Substitutes" onBack={onBack} />
+      <div className="search-bar" style={{margin:'16px 20px'}}>
+        <i className="fas fa-search" />
+        <input placeholder="Search ingredients..." value={search} onChange={e => setSearch(e.target.value)} />
+      </div>
+      <div className="section" style={{paddingTop:0}}>
+        {filtered.map((item, i) => (
+          <div key={i} className="sub-card slide-up" style={{animationDelay:`${i*0.05}s`}}>
+            <div className="sub-original">
+              <i className="fas fa-egg" style={{marginRight:8,color:'var(--primary)'}} />
+              {item.original}
+            </div>
+            {item.subs.map((sub, j) => (
+              <div key={j} className="sub-replacement">
+                <i className="fas fa-arrow-right" style={{color:'var(--primary)',fontSize:12}} />
+                <span>{sub}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// COOKING VIBES
+// ============================================================
+function CookingVibes({ onBack }) {
+  const [activeVibe, setActiveVibe] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const toggleVibe = (id) => {
+    if (activeVibe === id) {
+      setActiveVibe(null);
+      setIsPlaying(false);
+    } else {
+      setActiveVibe(id);
+      setIsPlaying(true);
+    }
+  };
+
+  return (
+    <div className="fade-in page-container">
+      <Header title="Cooking Vibes" onBack={onBack} />
+      <div className="section">
+        <div className="text-center mb-20">
+          <div style={{fontSize:60,marginBottom:8}}>
+            {isPlaying ? '🎶' : '🎵'}
+          </div>
+          <div style={{fontSize:16,fontWeight:600,color:'var(--gray-700)'}}>
+            {isPlaying ? `Playing: ${VIBES.find(v=>v.id===activeVibe)?.name}` : 'Choose your vibe'}
+          </div>
+          <div style={{fontSize:13,color:'var(--gray-400)',marginTop:4}}>
+            {isPlaying ? 'Tap again to stop' : 'Set the perfect mood for cooking'}
+          </div>
+        </div>
+        <div className="grid-2">
+          {VIBES.map(vibe => (
+            <div key={vibe.id} className={`vibe-card ${activeVibe===vibe.id?'active':''}`}
+              onClick={() => toggleVibe(vibe.id)}>
+              <div className="vibe-icon">{vibe.icon}</div>
+              <div className="vibe-name">{vibe.name}</div>
+              <div style={{fontSize:11,color:'var(--gray-400)',marginTop:4}}>{vibe.desc}</div>
+              {activeVibe === vibe.id && (
+                <div style={{marginTop:8}}>
+                  <span className="badge badge-primary">
+                    <i className="fas fa-volume-up" style={{marginRight:4}} /> Playing
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        {isPlaying && (
+          <div style={{marginTop:20,textAlign:'center'}}>
+            <button className="btn btn-danger" onClick={() => { setActiveVibe(null); setIsPlaying(false); }}>
+              <i className="fas fa-stop" /> Stop Music
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// EMPTY FRIDGE RESCUE (AI-Powered)
+// ============================================================
+function EmptyFridgeRescue({ onBack, onSelectRecipe }) {
+  const [ingredients, setIngredients] = useState([]);
+  const [inputVal, setInputVal] = useState("");
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [dietFilter, setDietFilter] = useState("all");
+
+  const allIngredients = [...new Set(RECIPES.flatMap(r => r.ingredients))].sort();
+  const suggestions = allIngredients.filter(i =>
+    inputVal.length >= 2 && i.toLowerCase().includes(inputVal.toLowerCase()) && !ingredients.includes(i)
+  ).slice(0, 5);
+
+  const addIngredient = (ing) => {
+    const normalized = ing.toLowerCase().trim();
+    if (normalized && !ingredients.includes(normalized)) {
+      setIngredients(prev => [...prev, normalized]);
+    }
+    setInputVal("");
+  };
+
+  const removeIngredient = (ing) => {
+    setIngredients(prev => prev.filter(i => i !== ing));
+  };
+
+  const findRecipes = () => {
+    setLoading(true);
+    // Simulate AI processing delay
+    setTimeout(() => {
+      const scored = RECIPES.map(recipe => {
+        const recipeIngs = recipe.ingredients.map(i => i.toLowerCase());
+        const matched = recipeIngs.filter(ri =>
+          ingredients.some(ui => ri.includes(ui) || ui.includes(ri))
+        );
+        const missing = recipeIngs.filter(ri =>
+          !ingredients.some(ui => ri.includes(ui) || ui.includes(ri))
+        );
+        const score = recipeIngs.length > 0 ? (matched.length / recipeIngs.length) * 100 : 0;
+        // AI-like scoring: bonus for more matched ingredients
+        const aiScore = score + (matched.length * 2);
+        return { ...recipe, matched, missing, score: Math.round(score), aiScore };
+      })
+      .filter(r => r.score > 0)
+      .sort((a, b) => b.aiScore - a.aiScore);
+
+      setResults(scored);
+      setLoading(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="fade-in page-container">
+      <Header title="Fridge Rescue" onBack={onBack}
+        rightAction={<span className="ai-badge"><i className="fas fa-wand-magic-sparkles" /> AI</span>} />
+
+      <div className="section">
+        <div style={{background:'linear-gradient(135deg, #8b5cf620, #6366f120)', borderRadius:'var(--radius-lg)', padding:16, marginBottom:20}}>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
+            <i className="fas fa-wand-magic-sparkles" style={{color:'#6366f1'}} />
+            <span style={{fontWeight:600,color:'#4f46e5'}}>AI-Powered Recipe Matching</span>
+          </div>
+          <p style={{fontSize:13,color:'var(--gray-600)',lineHeight:1.5}}>
+            Tell me what ingredients you have, and I'll find the best recipes you can make right now!
+          </p>
+        </div>
+
+        <div className="input-group">
+          <label>Add Your Ingredients</label>
+          <div style={{display:'flex',gap:8}}>
+            <input className="input" placeholder="Type an ingredient..."
+              value={inputVal} onChange={e => setInputVal(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && inputVal.trim() && addIngredient(inputVal)}
+              style={{flex:1}} />
+            <button className="btn btn-primary" onClick={() => inputVal.trim() && addIngredient(inputVal)}>
+              <i className="fas fa-plus" />
+            </button>
+          </div>
+        </div>
+
+        {/* Suggestions */}
+        {suggestions.length > 0 && (
+          <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:16}}>
+            {suggestions.map(s => (
+              <button key={s} className="chip" style={{cursor:'pointer',border:'1px dashed var(--primary)',color:'var(--primary)'}}
+                onClick={() => addIngredient(s)}>
+                <i className="fas fa-plus" style={{fontSize:10}} /> {s}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Added Ingredients */}
+        {ingredients.length > 0 && (
+          <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:20}}>
+            {ingredients.map(ing => (
+              <span key={ing} className="chip" style={{background:'var(--primary-bg)',color:'var(--primary)'}}>
+                {ing}
+                <button className="chip-remove" onClick={() => removeIngredient(ing)}>
+                  <i className="fas fa-times" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Quick Add */}
+        <div style={{marginBottom:20}}>
+          <div style={{fontSize:13,fontWeight:600,color:'var(--gray-500)',marginBottom:8}}>Quick Add:</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+            {["chicken breast","pasta","rice","eggs","garlic","onion","tomatoes","cheese","butter","milk"]
+              .filter(i => !ingredients.includes(i))
+              .slice(0,6)
+              .map(i => (
+                <button key={i} className="tag" onClick={() => addIngredient(i)}>{i}</button>
+              ))}
+          </div>
+        </div>
+
+        <button className="btn btn-primary btn-full btn-lg" onClick={findRecipes}
+          disabled={ingredients.length === 0 || loading}
+          style={{opacity: ingredients.length === 0 ? 0.5 : 1}}>
+          <i className="fas fa-wand-magic-sparkles" />
+          {loading ? 'Analyzing...' : `Find Recipes (${ingredients.length} ingredients)`}
+        </button>
+      </div>
+
+      {/* Results */}
+      {loading && (
+        <div className="ai-loading">
+          <i className="fas fa-spinner" /> AI is analyzing your ingredients...
+        </div>
+      )}
+
+      {results && !loading && (
+        <div className="section" style={{paddingTop:0}}>
+          <div className="section-title">
+            {results.length > 0 ? `Found ${results.length} Recipes` : 'No Matches'}
+          </div>
+          {results.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-fridge" />
+              <h3>No recipes match</h3>
+              <p>Try adding more ingredients</p>
+            </div>
+          ) : results.map((recipe, i) => (
+            <div key={recipe.id} className="card mb-16 slide-up" style={{animationDelay:`${i*0.05}s`}}
+              onClick={() => onSelectRecipe(recipe)}>
+              <div style={{display:'flex'}}>
+                <img src={recipe.image} alt={recipe.name}
+                  style={{width:110,height:110,objectFit:'cover',borderRadius:'var(--radius-lg) 0 0 var(--radius-lg)'}} />
+                <div style={{flex:1,padding:14}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+                    <div style={{fontWeight:600,fontSize:15}}>{recipe.name}</div>
+                    <div style={{textAlign:'center'}}>
+                      <div className="match-score">{recipe.score}%</div>
+                      <div className="match-label">match</div>
+                    </div>
+                  </div>
+                  <div style={{marginTop:6}}>
+                    <div style={{fontSize:12,color:'var(--success)',fontWeight:500}}>
+                      <i className="fas fa-check" /> {recipe.matched.length} ingredients you have
+                    </div>
+                    {recipe.missing.length > 0 && (
+                      <div style={{fontSize:12,color:'var(--gray-400)',marginTop:2}}>
+                        <i className="fas fa-shopping-cart" /> Need: {recipe.missing.slice(0,3).join(", ")}
+                        {recipe.missing.length > 3 && ` +${recipe.missing.length - 3} more`}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// MEAL PLANNER (POST-MVP Feature)
+// ============================================================
+function MealPlanner({ onMenuOpen, favorites }) {
+  const [mealPlan, setMealPlan] = useLocalStorage('mealPlan', {});
+  const [showPicker, setShowPicker] = useState(null); // { day, meal }
+  const [toast, setToast] = useState(null);
+
+  const mealTypes = ["Breakfast", "Lunch", "Dinner"];
+
+  const assignRecipe = (day, meal, recipeId) => {
+    setMealPlan(prev => ({
+      ...prev,
+      [`${day}-${meal}`]: recipeId
+    }));
+    setShowPicker(null);
+    setToast(`Added to ${day} ${meal}!`);
+  };
+
+  const removeRecipe = (day, meal) => {
+    setMealPlan(prev => {
+      const next = {...prev};
+      delete next[`${day}-${meal}`];
+      return next;
+    });
+  };
+
+  const clearAll = () => {
+    setMealPlan({});
+    setToast("Meal plan cleared!");
+  };
+
+  const getRecipe = (id) => RECIPES.find(r => r.id === id);
+
+  // Shopping list generation
+  const [showShoppingList, setShowShoppingList] = useState(false);
+  const shoppingList = useMemo(() => {
+    const ingredients = {};
+    Object.values(mealPlan).forEach(recipeId => {
+      const recipe = getRecipe(recipeId);
+      if (recipe) {
+        recipe.amounts.forEach((amount, idx) => {
+          const name = recipe.ingredients[idx];
+          if (!ingredients[name]) ingredients[name] = [];
+          ingredients[name].push(amount);
+        });
+      }
+    });
+    return ingredients;
+  }, [mealPlan]);
+
+  const totalMeals = Object.keys(mealPlan).length;
+
+  return (
+    <div className="fade-in page-container">
+      <Header title="Meal Planner" onMenuOpen={onMenuOpen}
+        rightAction={
+          <button className="header-icon" onClick={() => setShowShoppingList(true)}>
+            <i className="fas fa-list-check" />
+          </button>
+        } />
+
+      <div style={{background:'linear-gradient(135deg, #f59e0b20, #f97316 20)',borderRadius:0,padding:'16px 20px',
+        display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <div>
+          <div style={{fontSize:14,fontWeight:600,color:'var(--gray-800)'}}>This Week's Plan</div>
+          <div style={{fontSize:12,color:'var(--gray-500)'}}>{totalMeals} meals planned</div>
+        </div>
+        {totalMeals > 0 && (
+          <button className="btn btn-sm btn-secondary" onClick={clearAll}>
+            <i className="fas fa-trash" /> Clear
+          </button>
+        )}
+      </div>
+
+      <div className="section">
+        {DAYS.map(day => {
+          const dayMeals = mealTypes.map(m => ({
+            type: m,
+            recipeId: mealPlan[`${day}-${m}`],
+            recipe: getRecipe(mealPlan[`${day}-${m}`])
+          }));
+          const hasMeals = dayMeals.some(m => m.recipeId);
+
+          return (
+            <div key={day} className={`day-card ${hasMeals?'has-meal':''}`}>
+              <div className="day-name">{day}</div>
+              {mealTypes.map(meal => {
+                const key = `${day}-${meal}`;
+                const recipeId = mealPlan[key];
+                const recipe = getRecipe(recipeId);
+                return (
+                  <div key={meal} style={{display:'flex',alignItems:'center',gap:10,padding:'6px 0',
+                    borderBottom:'1px solid var(--gray-100)'}}>
+                    <span style={{fontSize:12,fontWeight:600,color:'var(--gray-500)',width:65}}>{meal}</span>
+                    {recipe ? (
+                      <div style={{flex:1,display:'flex',alignItems:'center',gap:8}}>
+                        <img src={recipe.image} style={{width:32,height:32,borderRadius:6,objectFit:'cover'}} />
+                        <span style={{fontSize:13,fontWeight:500,flex:1}}>{recipe.name}</span>
+                        <button style={{background:'none',border:'none',color:'var(--gray-400)',cursor:'pointer',fontSize:14}}
+                          onClick={() => removeRecipe(day, meal)}>
+                          <i className="fas fa-times" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button style={{flex:1,padding:'8px',border:'1px dashed var(--gray-300)',borderRadius:8,
+                        background:'none',cursor:'pointer',fontSize:13,color:'var(--gray-400)',textAlign:'left'}}
+                        onClick={() => setShowPicker({day, meal})}>
+                        <i className="fas fa-plus" style={{marginRight:6}} /> Add meal
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Recipe Picker Modal */}
+      {showPicker && (
+        <div className="overlay" onClick={() => setShowPicker(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-handle" />
+            <div style={{fontSize:18,fontWeight:700,marginBottom:4}}>
+              Choose a Recipe
+            </div>
+            <div style={{fontSize:13,color:'var(--gray-500)',marginBottom:16}}>
+              {showPicker.day} — {showPicker.meal}
+            </div>
+            <div style={{maxHeight:'50vh',overflowY:'auto'}}>
+              {RECIPES.map(recipe => (
+                <div key={recipe.id} className="action-row" style={{borderRadius:8,marginBottom:4}}
+                  onClick={() => assignRecipe(showPicker.day, showPicker.meal, recipe.id)}>
+                  <img src={recipe.image} style={{width:44,height:44,borderRadius:8,objectFit:'cover',marginRight:12}} />
+                  <div className="action-row-content">
+                    <div className="action-row-title" style={{fontSize:14}}>{recipe.name}</div>
+                    <div className="action-row-subtitle">{recipe.time} min · {recipe.category}</div>
+                  </div>
+                  {favorites.includes(recipe.id) && (
+                    <i className="fas fa-heart" style={{color:'var(--danger)',fontSize:12}} />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Shopping List Modal */}
+      {showShoppingList && (
+        <div className="overlay" onClick={() => setShowShoppingList(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-handle" />
+            <div style={{fontSize:18,fontWeight:700,marginBottom:4}}>
+              <i className="fas fa-cart-shopping" style={{marginRight:8,color:'var(--primary)'}} />
+              Shopping List
+            </div>
+            <div style={{fontSize:13,color:'var(--gray-500)',marginBottom:16}}>
+              Based on your meal plan ({totalMeals} meals)
+            </div>
+            {Object.keys(shoppingList).length === 0 ? (
+              <div className="empty-state">
+                <i className="fas fa-cart-shopping" />
+                <h3>No meals planned yet</h3>
+                <p>Add meals to your plan to generate a shopping list</p>
+              </div>
+            ) : (
+              <div style={{maxHeight:'50vh',overflowY:'auto'}}>
+                {Object.entries(shoppingList).map(([name, amounts]) => (
+                  <div key={name} className="ingredient-item">
+                    <div className="ingredient-check"><i className="fas fa-circle" style={{fontSize:6,color:'var(--primary)'}} /></div>
+                    <div>
+                      <div style={{fontWeight:500,fontSize:14,textTransform:'capitalize'}}>{name}</div>
+                      <div style={{fontSize:12,color:'var(--gray-400)'}}>{amounts.join(" + ")}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button className="btn btn-primary btn-full" style={{marginTop:16}} onClick={() => setShowShoppingList(false)}>
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+    </div>
+  );
+}
+
+// ============================================================
+// FAVORITES PAGE
+// ============================================================
+function FavoritesPage({ favorites, onToggleFav, onSelectRecipe }) {
+  const favRecipes = RECIPES.filter(r => favorites.includes(r.id));
+
+  return (
+    <div className="fade-in">
+      <div className="hero-banner" style={{background:'linear-gradient(135deg, #ef4444, #f97316)'}}>
+        <h2>My Favorites ❤️</h2>
+        <p>{favRecipes.length} saved recipe{favRecipes.length !== 1 ? 's' : ''}</p>
+      </div>
+      <div className="px-20" style={{paddingBottom:20}}>
+        {favRecipes.length === 0 ? (
+          <div className="empty-state">
+            <i className="far fa-heart" />
+            <h3>No favorites yet</h3>
+            <p>Tap the heart icon on any recipe to save it here</p>
+          </div>
+        ) : (
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            {favRecipes.map(recipe => (
+              <div key={recipe.id} className="card" style={{display:'flex',cursor:'pointer'}}
+                onClick={() => onSelectRecipe(recipe)}>
+                <img src={recipe.image} style={{width:100,height:100,objectFit:'cover'}} />
+                <div style={{flex:1,padding:12,display:'flex',flexDirection:'column',justifyContent:'space-between'}}>
+                  <div>
+                    <div style={{fontWeight:600,fontSize:15}}>{recipe.name}</div>
+                    <div style={{fontSize:12,color:'var(--gray-500)',marginTop:2}}>{recipe.category} · {recipe.time} min</div>
+                  </div>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <span className={`badge ${recipe.difficulty==='Easy'?'badge-success':'badge-accent'}`}>
+                      {recipe.difficulty}
+                    </span>
+                    <button className="heart-btn active" onClick={e => { e.stopPropagation(); onToggleFav(recipe.id); }}>
+                      <i className="fas fa-heart" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// USER PROFILE
+// ============================================================
+function UserProfile() {
+  const [profile, setProfile] = useLocalStorage('userProfile', {
+    name: 'Carmel', dietary: '', goal: ''
+  });
+  const [editing, setEditing] = useState(false);
+  const [tempProfile, setTempProfile] = useState(profile);
+
+  const saveProfile = () => {
+    setProfile(tempProfile);
+    setEditing(false);
+  };
+
+  const stats = {
+    recipes: RECIPES.length,
+    favorites: JSON.parse(localStorage.getItem('favorites') || '[]').length,
+    mealPlans: Object.keys(JSON.parse(localStorage.getItem('mealPlan') || '{}')).length,
+  };
+
+  return (
+    <div className="fade-in">
+      <div className="profile-header">
+        <div className="profile-avatar">
+          <i className="fas fa-user" />
+        </div>
+        <div className="profile-name">{profile.name || 'User'}</div>
+        <div className="profile-email">DinnerDone Member</div>
+      </div>
+
+      <div className="section">
+        <div className="grid-3" style={{marginBottom:20}}>
+          <div style={{textAlign:'center',padding:12,background:'var(--gray-50)',borderRadius:'var(--radius)'}}>
+            <div style={{fontSize:24,fontWeight:700,color:'var(--primary)'}}>{stats.recipes}</div>
+            <div style={{fontSize:11,color:'var(--gray-500)'}}>Recipes</div>
+          </div>
+          <div style={{textAlign:'center',padding:12,background:'var(--gray-50)',borderRadius:'var(--radius)'}}>
+            <div style={{fontSize:24,fontWeight:700,color:'var(--danger)'}}>{stats.favorites}</div>
+            <div style={{fontSize:11,color:'var(--gray-500)'}}>Favorites</div>
+          </div>
+          <div style={{textAlign:'center',padding:12,background:'var(--gray-50)',borderRadius:'var(--radius)'}}>
+            <div style={{fontSize:24,fontWeight:700,color:'var(--accent)'}}>{stats.mealPlans}</div>
+            <div style={{fontSize:11,color:'var(--gray-500)'}}>Planned</div>
+          </div>
+        </div>
+
+        {editing ? (
+          <>
+            <div className="input-group">
+              <label>Name</label>
+              <input className="input" value={tempProfile.name}
+                onChange={e => setTempProfile({...tempProfile, name: e.target.value})} />
+            </div>
+            <div className="input-group">
+              <label>Dietary Preferences</label>
+              <select className="select" value={tempProfile.dietary}
+                onChange={e => setTempProfile({...tempProfile, dietary: e.target.value})}>
+                <option value="">No preference</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+                <option value="gluten-free">Gluten Free</option>
+                <option value="keto">Keto</option>
+              </select>
+            </div>
+            <div className="input-group">
+              <label>Cooking Goal</label>
+              <select className="select" value={tempProfile.goal}
+                onChange={e => setTempProfile({...tempProfile, goal: e.target.value})}>
+                <option value="">Select a goal</option>
+                <option value="learn">Learn to Cook</option>
+                <option value="healthy">Eat Healthier</option>
+                <option value="budget">Cook on a Budget</option>
+                <option value="quick">Quick Meals</option>
+              </select>
+            </div>
+            <div className="flex gap-10">
+              <button className="btn btn-primary" style={{flex:1}} onClick={saveProfile}>
+                <i className="fas fa-check" /> Save
+              </button>
+              <button className="btn btn-secondary" style={{flex:1}} onClick={() => setEditing(false)}>
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{marginBottom:20}}>
+              <div className="action-row" style={{borderRadius:'var(--radius)',marginBottom:8,border:'1px solid var(--gray-100)'}}>
+                <i className="fas fa-user" style={{marginRight:14,color:'var(--primary)'}} />
+                <div className="action-row-content">
+                  <div className="action-row-subtitle">Name</div>
+                  <div className="action-row-title">{profile.name || 'Not set'}</div>
+                </div>
+              </div>
+              <div className="action-row" style={{borderRadius:'var(--radius)',marginBottom:8,border:'1px solid var(--gray-100)'}}>
+                <i className="fas fa-leaf" style={{marginRight:14,color:'var(--success)'}} />
+                <div className="action-row-content">
+                  <div className="action-row-subtitle">Dietary Preference</div>
+                  <div className="action-row-title">{profile.dietary || 'No preference'}</div>
+                </div>
+              </div>
+              <div className="action-row" style={{borderRadius:'var(--radius)',marginBottom:8,border:'1px solid var(--gray-100)'}}>
+                <i className="fas fa-bullseye" style={{marginRight:14,color:'var(--accent)'}} />
+                <div className="action-row-content">
+                  <div className="action-row-subtitle">Cooking Goal</div>
+                  <div className="action-row-title">{profile.goal || 'Not set'}</div>
+                </div>
+              </div>
+            </div>
+            <button className="btn btn-primary btn-full" onClick={() => { setTempProfile(profile); setEditing(true); }}>
+              <i className="fas fa-pen" /> Edit Profile
+            </button>
+          </>
+        )}
+      </div>
+
+      <div className="section" style={{paddingTop:0}}>
+        <div className="section-title">About DinnerDone</div>
+        <p style={{fontSize:14,color:'var(--gray-600)',lineHeight:1.6}}>
+          DinnerDone is your all-in-one kitchen companion app. Browse recipes, plan your weekly meals,
+          use kitchen tools like timers and unit converters, and let our AI help you figure out what
+          to cook with what you have in your fridge.
+        </p>
+        <div style={{marginTop:16,padding:12,background:'var(--gray-50)',borderRadius:'var(--radius)',
+          fontSize:12,color:'var(--gray-500)'}}>
+          <div><strong>Version:</strong> 2.0 Enhanced MVP</div>
+          <div><strong>Platform:</strong> Built with React (Enhanced from Glide)</div>
+          <div><strong>Features:</strong> AI-Powered Recipe Matching, Meal Planning, Kitchen Tools</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// CONTACT PAGE
+// ============================================================
+function ContactPage({ onBack }) {
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = () => {
+    if (form.name && form.email && form.message) {
+      setSubmitted(true);
+    }
+  };
+
+  return (
+    <div className="fade-in page-container">
+      <Header title="Contact Us" onBack={onBack} />
+      <div className="section">
+        {submitted ? (
+          <div className="text-center" style={{padding:40}}>
+            <div style={{fontSize:60,marginBottom:16}}>✅</div>
+            <h3 style={{fontSize:20,fontWeight:700,marginBottom:8}}>Message Sent!</h3>
+            <p style={{fontSize:14,color:'var(--gray-500)'}}>
+              Thank you for reaching out. We'll get back to you soon!
+            </p>
+            <button className="btn btn-primary" style={{marginTop:20}} onClick={() => { setSubmitted(false); setForm({name:'',email:'',message:''}); }}>
+              Send Another
+            </button>
+          </div>
+        ) : (
+          <>
+            <div style={{textAlign:'center',marginBottom:24}}>
+              <div style={{fontSize:48,marginBottom:8}}>📬</div>
+              <h3 style={{fontSize:18,fontWeight:600}}>Get in Touch</h3>
+              <p style={{fontSize:13,color:'var(--gray-500)'}}>We'd love to hear from you!</p>
+            </div>
+            <div className="input-group">
+              <label>Name</label>
+              <input className="input" placeholder="Your name" value={form.name}
+                onChange={e => setForm({...form, name: e.target.value})} />
+            </div>
+            <div className="input-group">
+              <label>Email</label>
+              <input className="input" type="email" placeholder="your@email.com" value={form.email}
+                onChange={e => setForm({...form, email: e.target.value})} />
+            </div>
+            <div className="input-group">
+              <label>Message</label>
+              <textarea className="input" placeholder="Your message..." rows="4" value={form.message}
+                onChange={e => setForm({...form, message: e.target.value})}
+                style={{resize:'vertical',minHeight:100}} />
+            </div>
+            <button className="btn btn-primary btn-full btn-lg" onClick={handleSubmit}
+              disabled={!form.name || !form.email || !form.message}
+              style={{opacity: (!form.name || !form.email || !form.message) ? 0.5 : 1}}>
+              <i className="fas fa-paper-plane" /> Send Message
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// MAIN APP
+// ============================================================
+function App() {
+  const [page, setPage] = useState("recipes");
+  const [subPage, setSubPage] = useState(null);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [favorites, setFavorites] = useLocalStorage('favorites', []);
+  const [toast, setToast] = useState(null);
+
+  const toggleFavorite = (id) => {
+    setFavorites(prev => {
+      const next = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id];
+      setToast(next.includes(id) ? 'Added to favorites! ❤️' : 'Removed from favorites');
+      return next;
+    });
+  };
+
+  const navigateTo = (p) => {
+    setPage(p);
+    setSubPage(null);
+    setSelectedRecipe(null);
+  };
+
+  const openRecipe = (recipe) => {
+    setSelectedRecipe(recipe);
+  };
+
+  // Render based on current state
+  const renderContent = () => {
+    // Recipe detail view
+    if (selectedRecipe) {
+      return <RecipeDetail recipe={selectedRecipe}
+        onBack={() => setSelectedRecipe(null)}
+        isFav={favorites.includes(selectedRecipe.id)}
+        onToggleFav={() => toggleFavorite(selectedRecipe.id)} />;
+    }
+
+    // Kitchen Helper sub-pages
+    if (subPage) {
+      switch(subPage) {
+        case 'timer': return <KitchenTimer onBack={() => setSubPage(null)} />;
+        case 'converter': return <UnitConverter onBack={() => setSubPage(null)} />;
+        case 'substitutes': return <IngredientSubstitutes onBack={() => setSubPage(null)} />;
+        case 'vibes': return <CookingVibes onBack={() => setSubPage(null)} />;
+        case 'fridge': return <EmptyFridgeRescue onBack={() => setSubPage(null)} onSelectRecipe={openRecipe} />;
+        default: return null;
+      }
+    }
+
+    // Main pages
+    switch(page) {
+      case 'recipes':
+        return (
+          <>
+            <Header title="🍽️ DinnerDone" onMenuOpen={() => setSidebarOpen(true)} />
+            <RecipesList onSelectRecipe={openRecipe} favorites={favorites} onToggleFav={toggleFavorite} />
+          </>
+        );
+      case 'kitchen':
+        return (
+          <>
+            <Header title="Kitchen Helper" onMenuOpen={() => setSidebarOpen(true)} />
+            <KitchenHelper onNavigateTool={setSubPage} />
+          </>
+        );
+      case 'planner':
+        return <MealPlanner onMenuOpen={() => setSidebarOpen(true)} favorites={favorites} />;
+      case 'favorites':
+        return (
+          <>
+            <Header title="Favorites" onMenuOpen={() => setSidebarOpen(true)} />
+            <FavoritesPage favorites={favorites} onToggleFav={toggleFavorite} onSelectRecipe={openRecipe} />
+          </>
+        );
+      case 'profile':
+        return (
+          <>
+            <Header title="Profile" onMenuOpen={() => setSidebarOpen(true)} />
+            <UserProfile />
+          </>
+        );
+      case 'contact':
+        return <ContactPage onBack={() => navigateTo('recipes')} />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <div className="page-container">
+        {renderContent()}
+      </div>
+      {!selectedRecipe && !subPage && (
+        <BottomNav current={page} onNavigate={navigateTo} />
+      )}
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}
+        currentPage={page} onNavigate={navigateTo} />
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+    </>
+  );
+}
+
+// Mount
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
