@@ -694,115 +694,457 @@ const { useState, useEffect, useRef, useCallback, useMemo } = React;
 const RECIPES = [
   {
     id: 1, name: "Garlic Butter Pasta",
-    category: "Pasta", time: 20, servings: 4, difficulty: "Easy",
+    category: "Pasta", time: 20, servings: 2, difficulty: "Medium",
     image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=400&fit=crop",
-    ingredients: ["pasta", "butter", "garlic", "salt", "pepper", "parmesan cheese", "parsley"],
-    amounts: ["400g spaghetti", "4 tbsp butter", "6 cloves garlic, minced", "1 tsp salt", "1/2 tsp pepper", "1/2 cup parmesan", "Fresh parsley"],
-    steps: ["Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.", "While pasta cooks, melt butter in a large skillet over medium heat. Add minced garlic and cook for 1-2 minutes until fragrant.", "Drain pasta, reserving 1 cup of pasta water. Add pasta to the skillet with the garlic butter.", "Toss well, adding pasta water as needed for a silky sauce. Season with salt and pepper.", "Serve topped with freshly grated parmesan cheese and chopped parsley."],
+    ingredients: ["pasta", "butter", "garlic", "salt", "pepper"],
+    amounts: ["pasta", "butter", "garlic", "salt", "pepper"],
+    steps: ["Boil pasta.", "Melt butter, fry garlic 1 min.", "Toss pasta in garlic butter.", "Season."],
+    tags: ["vegetarian", "comfort food"]
+  },
+  {
+    id: 2, name: "Tomato Egg Stir-fry",
+    category: "Main", time: 15, servings: 2, difficulty: "Medium",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop",
+    ingredients: ["eggs", "tomatoes", "salt", "sugar", "oil"],
+    amounts: ["eggs", "tomatoes", "salt", "sugar", "oil"],
+    steps: ["Chop tomatoes.", "Scramble eggs.", "Fry tomatoes with a pinch sugar, add eggs, stir."],
+    tags: ["quick", "vegetarian", "asian"]
+  },
+  {
+    id: 3, name: "Cheese Toast",
+    category: "Breakfast", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop",
+    ingredients: ["bread", "cheese", "butter"],
+    amounts: ["bread", "cheese", "butter"],
+    steps: ["Butter bread, top with cheese, toast in pan or oven until melted."],
+    tags: ["quick", "vegetarian", "breakfast", "comfort food"]
+  },
+  {
+    id: 4, name: "Peanut Butter Banana Toast",
+    category: "Breakfast", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&h=400&fit=crop",
+    ingredients: ["bread", "peanut butter", "banana"],
+    amounts: ["bread", "peanut butter", "banana"],
+    steps: ["Toast bread, spread peanut butter, add banana slices."],
+    tags: ["quick", "vegetarian", "breakfast", "comfort food"]
+  },
+  {
+    id: 5, name: "Fried Rice",
+    category: "Main", time: 20, servings: 2, difficulty: "Medium",
+    image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&h=400&fit=crop",
+    ingredients: ["rice", "egg", "soy sauce", "oil", "onion", "any veggie"],
+    amounts: ["rice", "egg", "soy sauce", "oil", "onion", "any veggie"],
+    steps: ["Fry onion & veggies.", "Add cold rice.", "Push aside, scramble egg.", "Mix with soy sauce."],
+    tags: ["vegetarian", "asian"]
+  },
+  {
+    id: 6, name: "Tuna Mayo Onigiri",
+    category: "Lunch", time: 20, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&h=400&fit=crop",
+    ingredients: ["rice", "canned tuna", "mayonnaise"],
+    amounts: ["rice", "canned tuna", "mayonnaise"],
+    steps: ["Mix drained tuna + mayo.", "Wet hands, shape rice balls with tuna in center."],
+    tags: []
+  },
+  {
+    id: 7, name: "Quick Quesadilla",
+    category: "Lunch", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1618040996337-56904b7850b9?w=600&h=400&fit=crop",
+    ingredients: ["tortilla", "cheese", "any leftover meat/veggies"],
+    amounts: ["tortilla", "cheese", "any leftover meat/veggies"],
+    steps: ["Fill tortilla with cheese + extras, fold, pan-fry both sides until golden."],
+    tags: ["quick"]
+  },
+  {
+    id: 8, name: "Greek Yogurt Bowl",
+    category: "Breakfast", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop",
+    ingredients: ["greek yogurt", "honey", "any fruit", "nuts"],
+    amounts: ["greek yogurt", "honey", "any fruit", "nuts"],
+    steps: ["Scoop yogurt, drizzle honey, top with fruit and nuts."],
+    tags: ["quick", "vegetarian", "breakfast", "healthy"]
+  },
+  {
+    id: 9, name: "One-Pan Chicken & Rice",
+    category: "Main", time: 20, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&h=400&fit=crop",
+    ingredients: ["chicken", "rice", "onion", "water/broth", "salt", "pepper"],
+    amounts: ["chicken", "rice", "onion", "water/broth", "salt", "pepper"],
+    steps: ["Brown chicken, add chopped onion, rice, water (2:1), cover and cook 20 min."],
+    tags: []
+  },
+  {
+    id: 10, name: "Garlic Fried Eggs",
+    category: "Main", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&h=400&fit=crop",
+    ingredients: ["eggs", "garlic", "oil", "salt"],
+    amounts: ["eggs", "garlic", "oil", "salt"],
+    steps: ["Slice garlic thin, fry until golden, crack eggs on top, cook to your liking."],
+    tags: ["quick", "vegetarian"]
+  },
+  {
+    id: 11, name: "Avocado Toast",
+    category: "Breakfast", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=600&h=400&fit=crop",
+    ingredients: ["bread", "avocado", "salt", "lemon/chili flakes"],
+    amounts: ["bread", "avocado", "salt", "lemon/chili flakes"],
+    steps: ["Toast bread, mash avocado with salt & lemon, spread, add chili flakes."],
+    tags: ["quick", "vegetarian", "breakfast", "comfort food"]
+  },
+  {
+    id: 12, name: "5-Minute Tomato Pasta",
+    category: "Pasta", time: 5, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&h=400&fit=crop",
+    ingredients: ["pasta", "tomato", "garlic", "olive oil", "salt"],
+    amounts: ["pasta", "tomato", "garlic", "olive oil", "salt"],
+    steps: ["Boil pasta.", "Crush tomato + garlic + oil in pan, toss cooked pasta in sauce."],
     tags: ["quick", "vegetarian", "comfort food"]
   },
   {
-    id: 2, name: "Cheese Toast",
-    category: "Snack", time: 10, servings: 2, difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop",
-    ingredients: ["bread", "cheese", "butter", "garlic powder"],
-    amounts: ["4 slices bread", "1 cup shredded cheese", "2 tbsp butter, softened", "1/2 tsp garlic powder"],
-    steps: ["Preheat your oven broiler to high.", "Spread butter on one side of each bread slice and place on a baking sheet.", "Sprinkle garlic powder evenly, then top generously with shredded cheese.", "Broil for 2-3 minutes until cheese is bubbly and golden brown.", "Let cool slightly before serving."],
-    tags: ["quick", "snack", "vegetarian"]
+    id: 13, name: "Ham & Cheese Omelette",
+    category: "Breakfast", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=600&h=400&fit=crop",
+    ingredients: ["eggs", "ham", "cheese", "butter"],
+    amounts: ["eggs", "ham", "cheese", "butter"],
+    steps: ["Beat eggs, pour in hot buttered pan, add ham & cheese, fold."],
+    tags: ["quick", "breakfast", "comfort food"]
   },
   {
-    id: 3, name: "Classic Caesar Salad",
-    category: "Salad", time: 15, servings: 4, difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&h=400&fit=crop",
-    ingredients: ["romaine lettuce", "parmesan cheese", "croutons", "lemon", "olive oil", "garlic", "egg", "anchovy"],
-    amounts: ["2 heads romaine lettuce", "1/2 cup shaved parmesan", "1.5 cups croutons", "2 tbsp lemon juice", "1/3 cup olive oil", "2 cloves garlic", "1 egg yolk", "2 anchovy fillets"],
-    steps: ["Wash and chop romaine lettuce into bite-sized pieces. Pat dry and place in a large bowl.", "Make the dressing: blend egg yolk, garlic, anchovies, lemon juice, and olive oil until smooth.", "Pour dressing over lettuce and toss thoroughly to coat every leaf.", "Add croutons and half the parmesan, toss again gently.", "Serve immediately topped with remaining parmesan shavings."],
-    tags: ["healthy", "classic", "salad"]
+    id: 14, name: "Microwave Mug Pizza",
+    category: "Snack", time: 5, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=400&fit=crop",
+    ingredients: ["flour", "baking powder", "milk", "oil", "tomato sauce", "cheese", "toppings"],
+    amounts: ["flour", "baking powder", "milk", "oil", "tomato sauce", "cheese", "toppings"],
+    steps: ["Mix batter in mug, add sauce + cheese + toppings, microwave 1-2 min."],
+    tags: ["quick", "vegetarian"]
   },
   {
-    id: 4, name: "Chicken Stir Fry",
-    category: "Main", time: 25, servings: 4, difficulty: "Medium",
-    image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&h=400&fit=crop",
-    ingredients: ["chicken breast", "soy sauce", "bell pepper", "broccoli", "garlic", "ginger", "sesame oil", "rice", "cornstarch", "onion"],
-    amounts: ["500g chicken breast, sliced", "3 tbsp soy sauce", "2 bell peppers, sliced", "2 cups broccoli florets", "3 cloves garlic", "1 tbsp fresh ginger", "2 tbsp sesame oil", "2 cups cooked rice", "1 tbsp cornstarch", "1 onion, sliced"],
-    steps: ["Slice chicken and toss with cornstarch, 1 tbsp soy sauce. Let marinate for 10 minutes.", "Heat sesame oil in a wok or large skillet over high heat.", "Cook chicken in batches until golden brown, about 3-4 minutes per batch. Set aside.", "Add vegetables, garlic, and ginger to the wok. Stir fry for 3-4 minutes until tender-crisp.", "Return chicken to wok, add remaining soy sauce, toss everything together.", "Serve hot over steamed rice."],
-    tags: ["protein", "asian", "healthy"]
+    id: 15, name: "Cucumber Tomato Salad",
+    category: "Salad", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop",
+    ingredients: ["cucumber", "tomato", "onion", "vinegar", "oil", "salt"],
+    amounts: ["cucumber", "tomato", "onion", "vinegar", "oil", "salt"],
+    steps: ["Chop everything, mix with vinegar & oil, season."],
+    tags: ["quick", "vegetarian", "healthy"]
   },
   {
-    id: 5, name: "Avocado Toast",
-    category: "Breakfast", time: 10, servings: 2, difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=600&h=400&fit=crop",
-    ingredients: ["bread", "avocado", "lemon", "salt", "pepper", "red pepper flakes", "egg"],
-    amounts: ["2 slices sourdough bread", "1 ripe avocado", "1 tbsp lemon juice", "1/2 tsp salt", "1/4 tsp pepper", "Pinch of red pepper flakes", "2 eggs (optional)"],
-    steps: ["Toast bread slices until golden and crispy.", "Cut avocado in half, remove pit, and scoop into a bowl. Add lemon juice, salt, and pepper.", "Mash avocado with a fork to desired consistency (chunky or smooth).", "Spread mashed avocado generously on each toast.", "Top with red pepper flakes and optionally a poached or fried egg."],
-    tags: ["breakfast", "healthy", "quick", "vegetarian"]
-  },
-  {
-    id: 6, name: "Tomato Soup",
-    category: "Soup", time: 35, servings: 6, difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop",
-    ingredients: ["tomatoes", "onion", "garlic", "olive oil", "vegetable broth", "basil", "cream", "salt", "pepper", "sugar"],
-    amounts: ["800g canned tomatoes", "1 large onion, diced", "4 cloves garlic", "2 tbsp olive oil", "2 cups vegetable broth", "Fresh basil leaves", "1/4 cup cream", "Salt to taste", "Pepper to taste", "1 tsp sugar"],
-    steps: ["Heat olive oil in a large pot. Add diced onion and cook for 5 minutes until soft.", "Add garlic and cook for 1 minute until fragrant.", "Add canned tomatoes, vegetable broth, and sugar. Bring to a boil.", "Reduce heat and simmer for 20 minutes. Add basil leaves.", "Blend until smooth using an immersion blender. Stir in cream, season with salt and pepper.", "Serve hot with crusty bread or grilled cheese."],
-    tags: ["soup", "comfort food", "vegetarian"]
-  },
-  {
-    id: 7, name: "Banana Pancakes",
-    category: "Breakfast", time: 20, servings: 4, difficulty: "Easy",
+    id: 16, name: "Banana Oat Pancakes",
+    category: "Breakfast", time: 20, servings: 2, difficulty: "Easy",
     image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&h=400&fit=crop",
-    ingredients: ["banana", "egg", "flour", "milk", "baking powder", "sugar", "butter", "vanilla extract", "maple syrup"],
-    amounts: ["2 ripe bananas", "2 eggs", "1 cup flour", "3/4 cup milk", "1 tsp baking powder", "1 tbsp sugar", "2 tbsp melted butter", "1 tsp vanilla extract", "Maple syrup for serving"],
-    steps: ["Mash bananas in a large bowl until smooth.", "Add eggs, milk, melted butter, and vanilla. Whisk well.", "Add flour, baking powder, and sugar. Mix until just combined (don't overmix).", "Heat a non-stick pan over medium heat. Grease lightly with butter.", "Pour 1/4 cup batter per pancake. Cook until bubbles form on surface, flip and cook 1-2 more minutes.", "Serve stacked with maple syrup and sliced banana."],
-    tags: ["breakfast", "sweet", "vegetarian"]
+    ingredients: ["banana", "oats", "egg", "milk"],
+    amounts: ["banana", "oats", "egg", "milk"],
+    steps: ["Blend everything, cook spoonfuls on pan like normal pancakes."],
+    tags: ["vegetarian", "breakfast", "sweet"]
   },
   {
-    id: 8, name: "Mediterranean Bowl",
-    category: "Main", time: 30, servings: 2, difficulty: "Medium",
+    id: 17, name: "Quick Lentil Soup",
+    category: "Soup", time: 30, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop",
+    ingredients: ["lentils", "onion", "carrot", "garlic", "broth/water", "cumin"],
+    amounts: ["lentils", "onion", "carrot", "garlic", "broth/water", "cumin"],
+    steps: ["Saut\u00e9 onion, carrot, garlic.", "Add lentils + water + cumin, boil 15-20 min."],
+    tags: ["vegetarian"]
+  },
+  {
+    id: 18, name: "Pesto Pasta",
+    category: "Pasta", time: 20, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=600&h=400&fit=crop",
+    ingredients: ["pasta", "pesto", "cherry tomatoes (optional)"],
+    amounts: ["pasta", "pesto", "cherry tomatoes (optional)"],
+    steps: ["Boil pasta, mix with pesto, add halved tomatoes if you have them."],
+    tags: ["vegetarian", "comfort food"]
+  },
+  {
+    id: 19, name: "Egg Drop Soup",
+    category: "Soup", time: 30, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&h=400&fit=crop",
+    ingredients: ["eggs", "broth/water", "cornstarch", "green onion"],
+    amounts: ["eggs", "broth/water", "cornstarch", "green onion"],
+    steps: ["Boil broth, drizzle beaten egg, thicken with cornstarch slurry, top with onion."],
+    tags: ["vegetarian", "asian"]
+  },
+  {
+    id: 20, name: "Chickpea Salad",
+    category: "Salad", time: 10, servings: 2, difficulty: "Easy",
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop",
-    ingredients: ["quinoa", "cucumber", "tomatoes", "red onion", "olives", "feta cheese", "olive oil", "lemon", "chickpeas", "hummus"],
-    amounts: ["1 cup quinoa", "1 cucumber, diced", "1 cup cherry tomatoes", "1/4 red onion", "1/2 cup kalamata olives", "100g feta cheese", "3 tbsp olive oil", "2 tbsp lemon juice", "1 can chickpeas", "4 tbsp hummus"],
-    steps: ["Cook quinoa according to package directions. Let cool slightly.", "Dice cucumber, halve tomatoes, thinly slice red onion.", "Drain and rinse chickpeas.", "Arrange quinoa in bowls. Top with vegetables, chickpeas, olives, and crumbled feta.", "Drizzle with olive oil and lemon juice.", "Add a generous dollop of hummus on the side. Serve."],
-    tags: ["healthy", "mediterranean", "vegetarian"]
+    ingredients: ["canned chickpeas", "onion", "tomato", "lemon", "olive oil", "salt"],
+    amounts: ["canned chickpeas", "onion", "tomato", "lemon", "olive oil", "salt"],
+    steps: ["Drain chickpeas, mix with chopped veggies, dress with lemon & oil."],
+    tags: ["quick", "vegetarian", "healthy"]
   },
   {
-    id: 9, name: "Chocolate Mug Cake",
-    category: "Dessert", time: 5, servings: 1, difficulty: "Easy",
+    id: 21, name: "Butter Chicken (lazy)",
+    category: "Main", time: 30, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600&h=400&fit=crop",
+    ingredients: ["chicken", "yogurt", "butter", "tomato paste", "garam masala"],
+    amounts: ["chicken", "yogurt", "butter", "tomato paste", "garam masala"],
+    steps: ["Marinate chicken in yogurt + masala 10 min.", "Fry in butter, add tomato paste, simmer."],
+    tags: []
+  },
+  {
+    id: 22, name: "Chocolate Mug Cake",
+    category: "Dessert", time: 5, servings: 2, difficulty: "Easy",
     image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&h=400&fit=crop",
-    ingredients: ["flour", "sugar", "cocoa powder", "milk", "vegetable oil", "egg", "vanilla extract", "baking powder"],
-    amounts: ["4 tbsp flour", "3 tbsp sugar", "2 tbsp cocoa powder", "3 tbsp milk", "2 tbsp vegetable oil", "1 egg", "1/2 tsp vanilla", "1/4 tsp baking powder"],
-    steps: ["In a large microwave-safe mug, mix flour, sugar, cocoa powder, and baking powder.", "Add egg, milk, oil, and vanilla extract. Mix until smooth with no lumps.", "Microwave on high for 1 minute 30 seconds to 2 minutes.", "Let it cool for 1 minute (it will be hot!).", "Top with whipped cream, ice cream, or powdered sugar and enjoy!"],
-    tags: ["dessert", "quick", "sweet"]
+    ingredients: ["flour", "sugar", "cocoa", "milk", "oil", "chocolate chips"],
+    amounts: ["flour", "sugar", "cocoa", "milk", "oil", "chocolate chips"],
+    steps: ["Mix in mug, microwave 90 seconds."],
+    tags: ["quick", "vegetarian", "sweet"]
   },
   {
-    id: 10, name: "Grilled Salmon",
-    category: "Main", time: 25, servings: 2, difficulty: "Medium",
-    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&h=400&fit=crop",
-    ingredients: ["salmon", "lemon", "garlic", "olive oil", "dill", "salt", "pepper", "asparagus"],
-    amounts: ["2 salmon fillets", "1 lemon", "3 cloves garlic, minced", "2 tbsp olive oil", "Fresh dill", "Salt to taste", "Pepper to taste", "1 bunch asparagus"],
-    steps: ["Preheat grill to medium-high heat (or oven to 200°C/400°F).", "Mix olive oil, minced garlic, lemon juice, salt, and pepper to make a marinade.", "Brush salmon fillets generously with the marinade.", "Grill salmon skin-side down for 4-5 minutes per side until flaky.", "Grill asparagus alongside for 3-4 minutes.", "Serve with fresh dill and lemon wedges."],
-    tags: ["protein", "healthy", "seafood"]
+    id: 23, name: "Creamy Mushroom Pasta",
+    category: "Pasta", time: 20, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=600&h=400&fit=crop",
+    ingredients: ["pasta", "mushrooms", "cream/greek yogurt", "garlic", "parmesan"],
+    amounts: ["pasta", "mushrooms", "cream/greek yogurt", "garlic", "parmesan"],
+    steps: ["Saut\u00e9 mushrooms + garlic, add cream/yogurt, toss with pasta, top parmesan."],
+    tags: ["vegetarian", "comfort food"]
   },
   {
-    id: 11, name: "Veggie Wrap",
+    id: 24, name: "Simple Dal",
+    category: "Soup", time: 30, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1546833999-abbf5c0317b4?w=600&h=400&fit=crop",
+    ingredients: ["red lentils", "onion", "garlic", "turmeric", "cumin", "oil"],
+    amounts: ["red lentils", "onion", "garlic", "turmeric", "cumin", "oil"],
+    steps: ["Fry onion & spices, add lentils + water, boil until soft."],
+    tags: ["vegetarian"]
+  },
+  {
+    id: 25, name: "Caprese Salad",
+    category: "Salad", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?w=600&h=400&fit=crop",
+    ingredients: ["tomato", "mozzarella", "basil", "olive oil", "balsamic"],
+    amounts: ["tomato", "mozzarella", "basil", "olive oil", "balsamic"],
+    steps: ["Slice tomato & mozzarella, layer with basil, drizzle oil & balsamic."],
+    tags: ["quick", "vegetarian", "healthy"]
+  },
+  {
+    id: 26, name: "Tuna Salad Sandwich",
+    category: "Salad", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&h=400&fit=crop",
+    ingredients: ["canned tuna", "mayo", "onion", "bread"],
+    amounts: ["canned tuna", "mayo", "onion", "bread"],
+    steps: ["Mix tuna + mayo + chopped onion, spread on bread."],
+    tags: ["quick", "healthy"]
+  },
+  {
+    id: 27, name: "Veggie Stir-fry",
+    category: "Main", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1512058564366-18510be2db87?w=600&h=400&fit=crop",
+    ingredients: ["any vegetables", "soy sauce", "garlic", "oil"],
+    amounts: ["any vegetables", "soy sauce", "garlic", "oil"],
+    steps: ["Heat oil, fry garlic, add veggies hardest first, finish with soy sauce."],
+    tags: ["quick", "vegetarian", "healthy", "asian"]
+  },
+  {
+    id: 28, name: "Overnight Oats",
+    category: "Breakfast", time: 30, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=600&h=400&fit=crop",
+    ingredients: ["oats", "milk", "yogurt", "any fruit", "honey"],
+    amounts: ["oats", "milk", "yogurt", "any fruit", "honey"],
+    steps: ["Mix everything in jar, refrigerate overnight."],
+    tags: ["vegetarian", "breakfast", "healthy"]
+  },
+  {
+    id: 29, name: "Scrambled Eggs Deluxe",
+    category: "Breakfast", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&h=400&fit=crop",
+    ingredients: ["eggs", "milk", "cheese", "spinach/tomato"],
+    amounts: ["eggs", "milk", "cheese", "spinach/tomato"],
+    steps: ["Beat eggs + milk, cook slow, add cheese & veggies at the end."],
+    tags: ["quick", "vegetarian", "breakfast"]
+  },
+  {
+    id: 30, name: "Potato Hash",
+    category: "Snack", time: 20, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1598214886806-ec852ef32b42?w=600&h=400&fit=crop",
+    ingredients: ["potatoes", "onion", "egg (optional)", "oil"],
+    amounts: ["potatoes", "onion", "egg (optional)", "oil"],
+    steps: ["Dice & fry potatoes + onion until crispy, top with fried egg if you have."],
+    tags: ["vegetarian"]
+  },
+  {
+    id: 31, name: "Mango Smoothie",
+    category: "Breakfast", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1546173159-315724a31696?w=600&h=400&fit=crop",
+    ingredients: ["mango", "yogurt/milk", "banana (optional)", "ice"],
+    amounts: ["mango", "yogurt/milk", "banana (optional)", "ice"],
+    steps: ["Blend everything until smooth."],
+    tags: ["quick", "vegetarian", "breakfast", "healthy"]
+  },
+  {
+    id: 32, name: "Quick Shakshuka",
+    category: "Main", time: 30, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1590412200988-a436970781fa?w=600&h=400&fit=crop",
+    ingredients: ["eggs", "tomato", "onion", "bell pepper", "cumin"],
+    amounts: ["eggs", "tomato", "onion", "bell pepper", "cumin"],
+    steps: ["Saut\u00e9 onion & pepper, add tomato + cumin, crack eggs in, cover until set."],
+    tags: ["vegetarian"]
+  },
+  {
+    id: 33, name: "Hummus & Veggies",
+    category: "Snack", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&h=400&fit=crop",
+    ingredients: ["canned chickpeas", "tahini/lemon", "garlic", "veggies"],
+    amounts: ["canned chickpeas", "tahini/lemon", "garlic", "veggies"],
+    steps: ["Blend chickpeas + garlic + lemon + little water, serve with veggie sticks."],
+    tags: ["quick", "vegetarian", "healthy"]
+  },
+  {
+    id: 34, name: "French Toast",
+    category: "Breakfast", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&h=400&fit=crop",
+    ingredients: ["bread", "egg", "milk", "cinnamon", "butter"],
+    amounts: ["bread", "egg", "milk", "cinnamon", "butter"],
+    steps: ["Dip bread in egg+milk+cinnamon mix, fry in butter."],
+    tags: ["quick", "vegetarian", "breakfast", "comfort food"]
+  },
+  {
+    id: 35, name: "Bean & Cheese Burrito",
     category: "Lunch", time: 15, servings: 2, difficulty: "Easy",
     image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&h=400&fit=crop",
-    ingredients: ["tortilla", "hummus", "lettuce", "tomatoes", "cucumber", "bell pepper", "avocado", "feta cheese"],
-    amounts: ["2 large tortillas", "4 tbsp hummus", "2 cups lettuce", "1 tomato, sliced", "1/2 cucumber", "1 bell pepper", "1 avocado", "50g feta cheese"],
-    steps: ["Lay tortillas flat and spread hummus generously across the center.", "Layer lettuce, sliced tomato, cucumber, and bell pepper strips.", "Add sliced avocado and crumbled feta cheese.", "Fold the bottom edge up, then fold in the sides and roll tightly.", "Cut in half diagonally and serve immediately."],
-    tags: ["lunch", "healthy", "vegetarian", "quick"]
+    ingredients: ["tortilla", "canned beans", "cheese", "salsa"],
+    amounts: ["tortilla", "canned beans", "cheese", "salsa"],
+    steps: ["Heat beans, fill tortilla with beans + cheese + salsa, roll and toast."],
+    tags: ["quick", "vegetarian", "comfort food"]
   },
   {
-    id: 12, name: "Berry Smoothie Bowl",
-    category: "Breakfast", time: 10, servings: 1, difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&h=400&fit=crop",
-    ingredients: ["mixed berries", "banana", "yogurt", "granola", "honey", "chia seeds", "coconut flakes"],
-    amounts: ["1 cup frozen mixed berries", "1 frozen banana", "1/2 cup Greek yogurt", "1/4 cup granola", "1 tbsp honey", "1 tbsp chia seeds", "1 tbsp coconut flakes"],
-    steps: ["Blend frozen berries, banana, and yogurt until thick and smooth.", "Pour into a bowl — it should be thicker than a regular smoothie.", "Top with granola, chia seeds, and coconut flakes in neat rows.", "Drizzle with honey.", "Serve immediately and enjoy with a spoon!"],
-    tags: ["breakfast", "healthy", "sweet", "vegetarian"]
-  }
+    id: 36, name: "PBJ Sandwich",
+    category: "Lunch", time: 5, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&h=400&fit=crop",
+    ingredients: ["bread", "peanut butter", "jam"],
+    amounts: ["bread", "peanut butter", "jam"],
+    steps: ["You know this one already!."],
+    tags: ["quick", "vegetarian"]
+  },
+  {
+    id: 37, name: "Simple Risotto",
+    category: "Pasta", time: 30, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=600&h=400&fit=crop",
+    ingredients: ["rice", "onion", "broth", "parmesan", "butter"],
+    amounts: ["rice", "onion", "broth", "parmesan", "butter"],
+    steps: ["Saut\u00e9 onion, toast rice, add broth ladle by ladle stirring, finish with butter & cheese."],
+    tags: ["vegetarian", "comfort food"]
+  },
+  {
+    id: 38, name: "Chicken Salad",
+    category: "Salad", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&h=400&fit=crop",
+    ingredients: ["cooked chicken", "mayo", "celery", "onion"],
+    amounts: ["cooked chicken", "mayo", "celery", "onion"],
+    steps: ["Shred chicken, mix with mayo and chopped celery/onion."],
+    tags: ["quick", "healthy"]
+  },
+  {
+    id: 39, name: "Microwave Baked Potato",
+    category: "Main", time: 5, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1568569350062-ebfa3cb195df?w=600&h=400&fit=crop",
+    ingredients: ["potato", "butter", "cheese", "sour cream"],
+    amounts: ["potato", "butter", "cheese", "sour cream"],
+    steps: ["Poke potato, microwave 6-8 min, top with whatever you have."],
+    tags: ["quick", "vegetarian"]
+  },
+  {
+    id: 40, name: "Garlic Bread",
+    category: "Snack", time: 20, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1573140401552-a44e4e5e1b0b?w=600&h=400&fit=crop",
+    ingredients: ["bread", "butter", "garlic", "parsley"],
+    amounts: ["bread", "butter", "garlic", "parsley"],
+    steps: ["Mix soft butter + minced garlic, spread on bread, bake or pan-toast."],
+    tags: ["vegetarian"]
+  },
+  {
+    id: 41, name: "Fruit Salad",
+    category: "Salad", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=600&h=400&fit=crop",
+    ingredients: ["any fruits you have", "lemon", "honey"],
+    amounts: ["any fruits you have", "lemon", "honey"],
+    steps: ["Chop fruits, squeeze lemon, drizzle honey."],
+    tags: ["quick", "vegetarian", "healthy", "sweet"]
+  },
+  {
+    id: 42, name: "Easy Pad Thai",
+    category: "Pasta", time: 20, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=600&h=400&fit=crop",
+    ingredients: ["rice noodles", "egg", "soy sauce", "lime", "peanuts", "bean sprouts"],
+    amounts: ["rice noodles", "egg", "soy sauce", "lime", "peanuts", "bean sprouts"],
+    steps: ["Soak noodles, scramble egg, toss everything together with soy & lime."],
+    tags: ["vegetarian", "asian"]
+  },
+  {
+    id: 43, name: "Cottage Cheese Bowl",
+    category: "Breakfast", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop",
+    ingredients: ["cottage cheese", "fruit", "nuts", "honey"],
+    amounts: ["cottage cheese", "fruit", "nuts", "honey"],
+    steps: ["Scoop cottage cheese, top with fruit & nuts, drizzle honey."],
+    tags: ["quick", "vegetarian", "breakfast", "comfort food"]
+  },
+  {
+    id: 44, name: "Spinach & Feta Omelette",
+    category: "Breakfast", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=600&h=400&fit=crop",
+    ingredients: ["eggs", "spinach", "feta", "onion"],
+    amounts: ["eggs", "spinach", "feta", "onion"],
+    steps: ["Saut\u00e9 spinach & onion, pour beaten eggs, add feta, fold."],
+    tags: ["quick", "vegetarian", "breakfast"]
+  },
+  {
+    id: 45, name: "Quick Minestrone",
+    category: "Soup", time: 30, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop",
+    ingredients: ["any veggies", "pasta", "canned tomato", "broth"],
+    amounts: ["any veggies", "pasta", "canned tomato", "broth"],
+    steps: ["Chop veggies, simmer in broth + tomato, add pasta last 8 min."],
+    tags: ["vegetarian"]
+  },
+  {
+    id: 46, name: "Banana Nice Cream",
+    category: "Dessert", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=600&h=400&fit=crop",
+    ingredients: ["frozen bananas"],
+    amounts: ["frozen bananas"],
+    steps: ["Blend frozen bananas until creamy like ice cream."],
+    tags: ["quick", "vegetarian", "sweet"]
+  },
+  {
+    id: 47, name: "Classic Grilled Cheese",
+    category: "Lunch", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop",
+    ingredients: ["bread", "cheese", "butter"],
+    amounts: ["bread", "cheese", "butter"],
+    steps: ["Butter outside of bread, fill with cheese, fry both sides golden."],
+    tags: ["quick", "vegetarian", "comfort food"]
+  },
+  {
+    id: 48, name: "Rice Cooker Rice & Beans",
+    category: "Main", time: 20, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1536304929831-ee1ca9d44726?w=600&h=400&fit=crop",
+    ingredients: ["rice", "canned beans", "onion", "cumin"],
+    amounts: ["rice", "canned beans", "onion", "cumin"],
+    steps: ["Put everything in rice cooker with water, press start."],
+    tags: ["vegetarian"]
+  },
+  {
+    id: 49, name: "Apple Cinnamon Oatmeal",
+    category: "Breakfast", time: 15, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=600&h=400&fit=crop",
+    ingredients: ["oats", "apple", "cinnamon", "milk", "sugar/honey"],
+    amounts: ["oats", "apple", "cinnamon", "milk", "sugar/honey"],
+    steps: ["Cook oats in milk, add diced apple & cinnamon last 2 min."],
+    tags: ["quick", "vegetarian", "breakfast"]
+  },
+  {
+    id: 50, name: "Egg Salad Sandwich",
+    category: "Salad", time: 10, servings: 2, difficulty: "Easy",
+    image: "https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&h=400&fit=crop",
+    ingredients: ["eggs", "mayo", "mustard", "bread"],
+    amounts: ["eggs", "mayo", "mustard", "bread"],
+    steps: ["Boil & mash eggs with mayo + mustard, spread on bread."],
+    tags: ["quick", "vegetarian", "healthy"]
+  },
 ];
 
-const CATEGORIES = ["All", "Breakfast", "Lunch", "Main", "Pasta", "Salad", "Soup", "Snack", "Dessert"];
+const CATEGORIES = ["All", "Breakfast", "Lunch", "Main", "Pasta", "Salad", "Soup", "Snack", "Dessert", "Vegan", "Vegetarian", "Quick & Easy", "Comfort Food", "Healthy", "Asian"];
 
 const SUBSTITUTES = [
   { original: "Butter", subs: ["Coconut oil (1:1 ratio)", "Olive oil (3/4 amount)", "Greek yogurt (half amount)", "Applesauce (for baking)"] },
@@ -831,12 +1173,12 @@ const UNIT_CONVERSIONS = {
 };
 
 const VIBES = [
-  { id: "jazz", name: "Jazz Lounge", icon: "🎷", color: "#4f46e5", desc: "Smooth jazz for elegant cooking" },
-  { id: "italian", name: "Italian Kitchen", icon: "🇮🇹", color: "#dc2626", desc: "Classic Italian cooking vibes" },
-  { id: "chill", name: "Chill & Cook", icon: "🎵", color: "#0891b2", desc: "Relaxed lo-fi beats" },
-  { id: "party", name: "Kitchen Party", icon: "🎉", color: "#c026d3", desc: "Upbeat party cooking energy" },
-  { id: "nature", name: "Nature Sounds", icon: "🌿", color: "#16a34a", desc: "Calming nature ambiance" },
-  { id: "focus", name: "Deep Focus", icon: "🧘", color: "#ea580c", desc: "Minimal sounds for concentration" },
+  { id: "jazz", name: "Jazz Lounge", icon: "🎷", color: "#4f46e5", desc: "Smooth jazz for elegant cooking", spotify: "https://open.spotify.com/embed/playlist/37i9dQZF1DXbITWG1ZJKYt?utm_source=generator&theme=0" },
+  { id: "italian", name: "Italian Kitchen", icon: "🇮🇹", color: "#dc2626", desc: "Classic Italian cooking vibes", spotify: "https://open.spotify.com/embed/playlist/37i9dQZF1DX0Mz3WbpGECH?utm_source=generator&theme=0" },
+  { id: "chill", name: "Chill & Cook", icon: "🎵", color: "#0891b2", desc: "Relaxed lo-fi beats", spotify: "https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator&theme=0" },
+  { id: "party", name: "Kitchen Party", icon: "🎉", color: "#c026d3", desc: "Upbeat party cooking energy", spotify: "https://open.spotify.com/embed/playlist/37i9dQZF1DXa2PvUpywmrr?utm_source=generator&theme=0" },
+  { id: "nature", name: "Nature Sounds", icon: "🌿", color: "#16a34a", desc: "Calming nature ambiance", spotify: "https://open.spotify.com/embed/playlist/37i9dQZF1DX4PP3DA4J0N8?utm_source=generator&theme=0" },
+  { id: "focus", name: "Deep Focus", icon: "🧘", color: "#ea580c", desc: "Minimal sounds for concentration", spotify: "https://open.spotify.com/embed/playlist/37i9dQZF1DWZeKCadgRdKQ?utm_source=generator&theme=0" },
 ];
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -954,10 +1296,28 @@ function RecipesList({ onSelectRecipe, favorites, onToggleFav }) {
   const [category, setCategory] = useState("All");
 
   const filtered = useMemo(() => {
+    const MEAT_INGREDIENTS = ["chicken", "ham", "tuna", "salmon", "meat", "beef", "pork", "bacon", "sausage", "turkey", "shrimp", "prawn", "lamb", "duck", "canned tuna", "cooked chicken"];
+    const DAIRY_INGREDIENTS = ["cheese", "butter", "milk", "cream", "yogurt", "feta", "parmesan", "mozzarella", "sour cream", "feta cheese", "greek yogurt", "cottage cheese"];
     return RECIPES.filter(r => {
       const matchSearch = !search || r.name.toLowerCase().includes(search.toLowerCase()) ||
         r.ingredients.some(i => i.toLowerCase().includes(search.toLowerCase()));
-      const matchCat = category === "All" || r.category === category;
+      let matchCat = false;
+      if (category === "All") matchCat = true;
+      else if (category === "Vegan") {
+        const ings = r.ingredients.map(i => i.toLowerCase());
+        matchCat = !ings.some(i => MEAT_INGREDIENTS.some(m => i.includes(m))) &&
+                   !ings.some(i => DAIRY_INGREDIENTS.some(d => i.includes(d))) &&
+                   !ings.some(i => i.includes("egg") || i.includes("honey"));
+      }
+      else if (category === "Vegetarian") {
+        const ings = r.ingredients.map(i => i.toLowerCase());
+        matchCat = !ings.some(i => MEAT_INGREDIENTS.some(m => i.includes(m)));
+      }
+      else if (category === "Quick & Easy") matchCat = r.time <= 15;
+      else if (category === "Comfort Food") matchCat = (r.tags || []).some(t => t.includes("comfort"));
+      else if (category === "Healthy") matchCat = (r.tags || []).some(t => t.includes("healthy") || t.includes("vegetarian"));
+      else if (category === "Asian") matchCat = (r.tags || []).some(t => t.includes("asian"));
+      else matchCat = r.category === category;
       return matchSearch && matchCat;
     });
   }, [search, category]);
@@ -1385,17 +1745,16 @@ function IngredientSubstitutes({ onBack }) {
 // ============================================================
 function CookingVibes({ onBack }) {
   const [activeVibe, setActiveVibe] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const toggleVibe = (id) => {
     if (activeVibe === id) {
       setActiveVibe(null);
-      setIsPlaying(false);
     } else {
       setActiveVibe(id);
-      setIsPlaying(true);
     }
   };
+
+  const activeVibeData = VIBES.find(v => v.id === activeVibe);
 
   return (
     <div className="fade-in page-container">
@@ -1403,15 +1762,35 @@ function CookingVibes({ onBack }) {
       <div className="section">
         <div className="text-center mb-20">
           <div style={{fontSize:60,marginBottom:8}}>
-            {isPlaying ? '🎶' : '🎵'}
+            {activeVibe ? '🎶' : '🎵'}
           </div>
           <div style={{fontSize:16,fontWeight:600,color:'var(--gray-700)'}}>
-            {isPlaying ? `Playing: ${VIBES.find(v=>v.id===activeVibe)?.name}` : 'Choose your vibe'}
+            {activeVibe ? `Playing: ${activeVibeData?.name}` : 'Choose your vibe'}
           </div>
           <div style={{fontSize:13,color:'var(--gray-400)',marginTop:4}}>
-            {isPlaying ? 'Tap again to stop' : 'Set the perfect mood for cooking'}
+            {activeVibe ? 'Tap again to stop' : 'Set the perfect mood for cooking'}
           </div>
         </div>
+        {activeVibe && activeVibeData && (
+          <div style={{marginBottom:20,borderRadius:'var(--radius-lg)',overflow:'hidden',boxShadow:'var(--shadow-md)'}}>
+            <iframe
+              src={activeVibeData.spotify}
+              width="100%"
+              height="152"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              style={{borderRadius:'12px'}}
+            />
+          </div>
+        )}
+        {activeVibe && (
+          <div style={{marginBottom:20,textAlign:'center'}}>
+            <button className="btn btn-danger" onClick={() => setActiveVibe(null)}>
+              <i className="fas fa-stop" style={{marginRight:6}} /> Stop Music
+            </button>
+          </div>
+        )}
         <div className="grid-2">
           {VIBES.map(vibe => (
             <div key={vibe.id} className={`vibe-card ${activeVibe===vibe.id?'active':''}`}
@@ -1429,13 +1808,6 @@ function CookingVibes({ onBack }) {
             </div>
           ))}
         </div>
-        {isPlaying && (
-          <div style={{marginTop:20,textAlign:'center'}}>
-            <button className="btn btn-danger" onClick={() => { setActiveVibe(null); setIsPlaying(false); }}>
-              <i className="fas fa-stop" /> Stop Music
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
